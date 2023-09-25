@@ -17,7 +17,6 @@
 
 import { EditorSection, SpellingSection, WordChange } from '../../types/types';
 import { compareWords } from '../compareUtil';
-import { addLocations } from '../textUtils';
 
 export const createSpellingSection = (
   content: string,
@@ -35,12 +34,12 @@ export const createOriginalSection = (
   content: string,
   wordChanges: WordChange[]
 ) => {
-  const wordChangesOriginal = addLocations(content, 'removed', wordChanges);
   const originalSection = {
     text: content,
     lines: content.split('\n').length,
-    ranges: wordChangesOriginal,
-    color: '#A0D4A4',
+    ranges: wordChanges.filter((change) =>
+      ['removed', 'skip'].includes(change.change)
+    ),
   } as EditorSection;
   return originalSection;
 };
@@ -49,12 +48,12 @@ export const createCorrectedSection = (
   response: string,
   wordChanges: WordChange[]
 ) => {
-  const textRanges = addLocations(response, 'added', wordChanges);
   const correctedSection = {
     text: response,
     lines: response.split('\n').length,
-    ranges: textRanges,
-    color: '#00B4FF',
+    ranges: wordChanges.filter((change) =>
+      ['added', 'skip'].includes(change.change)
+    ),
   } as EditorSection;
   return correctedSection;
 };

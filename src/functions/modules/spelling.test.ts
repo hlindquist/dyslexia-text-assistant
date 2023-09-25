@@ -22,6 +22,7 @@ import {
   createOriginalSection,
   createSpellingSection,
 } from './spelling';
+import { ilog } from '../../utils/debugUtils';
 
 describe('createOriginalSection', () => {
   it('should return a corrected section with the provided response and text ranges', () => {
@@ -36,22 +37,9 @@ describe('createOriginalSection', () => {
     const expectedLines = 1;
     const expectedColor = '#A0D4A4';
     const expectedRanges: WordChange[] = [
-      {
-        location: {
-          start: { line: 0, character: 5 },
-          end: { line: 0, character: 8 },
-        },
-        word: 'are',
-        change: 'removed',
-      },
-      {
-        location: {
-          start: { line: 0, character: 9 },
-          end: { line: 0, character: 16 },
-        },
-        word: 'origina',
-        change: 'removed',
-      },
+      { word: 'This', change: 'skip' },
+      { word: 'are', change: 'removed' },
+      { word: 'origina', change: 'removed' },
     ];
 
     // Act
@@ -60,7 +48,6 @@ describe('createOriginalSection', () => {
     // Assert
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
-    expect(result.color).toEqual(expectedColor);
     expect(result.ranges).toEqual(expectedRanges);
   });
 });
@@ -81,28 +68,14 @@ describe('createCorrectedSection', () => {
     const expectedLines = 1;
     const expectedColor = '#00B4FF';
     const expectedRanges: WordChange[] = [
-      {
-        location: {
-          start: { line: 0, character: 5 },
-          end: { line: 0, character: 7 },
-        },
-        word: 'is',
-        change: 'added',
-      },
-      {
-        location: {
-          start: { line: 0, character: 8 },
-          end: { line: 0, character: 16 },
-        },
-        word: 'original',
-        change: 'added',
-      },
+      { word: 'This', change: 'skip' },
+      { word: 'is', change: 'added' },
+      { word: 'original', change: 'added' },
     ];
 
     // Assert
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
-    expect(result.color).toEqual(expectedColor);
     expect(result.ranges).toEqual(expectedRanges);
   });
 });
@@ -117,55 +90,70 @@ describe('createSpellingSections', () => {
 
     // Assert the original section
     const originalSection = result.original;
+
     expect(originalSection.lines).toBe(1);
-    expect(originalSection.color).toBe('#A0D4A4');
     expect(originalSection.ranges).toEqual([
+      {
+        word: 'Angus',
+        change: 'skip',
+      },
       {
         word: '.',
         change: 'removed',
-        location: {
-          start: { line: 0, character: 5 },
-          end: { line: 0, character: 6 },
-        },
+      },
+      {
+        word: ' ',
+        change: 'skip',
       },
       {
         word: 'Helo',
         change: 'removed',
-        location: {
-          start: { line: 0, character: 7 },
-          end: { line: 0, character: 11 },
-        },
+      },
+      {
+        word: ' ',
+        change: 'skip',
+      },
+      {
+        word: 'world',
+        change: 'skip',
       },
     ]);
 
     // Assert the corrected section
     const correctedSection = result.corrected;
     expect(correctedSection.lines).toBe(1);
-    expect(correctedSection.color).toBe('#00B4FF');
     expect(correctedSection.ranges).toEqual([
+      {
+        word: 'Angus',
+        change: 'skip',
+      },
       {
         word: ',',
         change: 'added',
-        location: {
-          start: { line: 0, character: 5 },
-          end: { line: 0, character: 6 },
-        },
+      },
+      {
+        word: ' ',
+        change: 'skip',
       },
       {
         word: 'Hello',
         change: 'added',
-        location: {
-          start: { line: 0, character: 7 },
-          end: { line: 0, character: 12 },
-        },
+      },
+      {
+        word: ' ',
+        change: 'skip',
       },
       {
         word: 'my',
         change: 'added',
-        location: {
-          start: { line: 0, character: 13 },
-          end: { line: 0, character: 15 },
-        },
+      },
+      {
+        word: ' ',
+        change: 'added',
+      },
+      {
+        word: 'world',
+        change: 'skip',
       },
     ]);
   });
