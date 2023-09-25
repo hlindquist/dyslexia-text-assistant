@@ -52,31 +52,6 @@ export const addLocation = (
   return changeWithLocation;
 };
 
-export const findWordIndexOld = (
-  startingLocation: TextPosition | undefined,
-  text: string,
-  wordChange: WordChange,
-  lineIndex: number
-) => {
-  let wordIndex = undefined;
-
-  if (!startingLocation || lineIndex >= startingLocation.line) {
-    const lines = text.split('\n');
-    if (lineIndex >= 0 && lineIndex < lines.length) {
-      const line = lines[lineIndex];
-      const wordStartPosition =
-        startingLocation?.line === lineIndex && startingLocation?.character
-          ? startingLocation?.character - 1
-          : 0;
-
-      wordIndex = findIndexInLine(line, wordChange, wordStartPosition);
-      wordIndex = wordIndex === -1 ? undefined : wordIndex;
-    }
-  }
-
-  return wordIndex;
-};
-
 export const findWordIndex = (
   startingLocation: TextPosition | undefined,
   text: string,
@@ -97,7 +72,11 @@ export const findWordIndex = (
       if (wordChange.word.length === 1) {
         wordIndex = line.indexOf(wordChange.word, wordStartPosition);
       } else {
-        const wordRegex = new RegExp(`\\b${wordChange.word}\\b`);
+        const escapedWord = wordChange.word.replace(
+          /[.*+\-?^${}()|[\]\\]/g,
+          '\\$&'
+        );
+        const wordRegex = new RegExp(`\\b${escapedWord}\\b`);
         const match = line.slice(wordStartPosition).match(wordRegex);
 
         if (match?.index !== undefined) {
@@ -126,13 +105,5 @@ const createLocation = (
   return location;
 };
 
-const findIndexInLine = (
-  line: string,
-  wordChange: WordChange,
-  wordStartPosition: number
-) => {
-  const wordRegex = new RegExp(`\\b${wordChange.word}\\b`);
-  const match = line.slice(wordStartPosition).match(wordRegex);
-
-  return match?.index !== undefined ? wordStartPosition + match.index : -1;
-};
+export const splitStringWithStopwords = (inputString: string) =>
+  inputString.match(/[.,!?]|[^.,!?]+/g) || [];

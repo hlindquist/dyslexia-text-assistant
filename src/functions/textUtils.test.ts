@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { addLocation } from './textUtils';
+import { addLocation, splitStringWithStopwords } from './textUtils';
 import { TextPosition, WordChange } from '../types/types';
 
 describe('addLocation', () => {
@@ -188,5 +188,16 @@ an banana.`;
     const result = [changeOne, changeTwo];
 
     expect(result).toEqual(expected);
+  });
+});
+
+describe('splitStringWithSpecialChars', () => {
+  it('should split the input string into an array with special characters preserved', () => {
+    const inputString = '.hei!halo,,';
+    const expectedOutput = ['.', 'hei', '!', 'halo', ',', ','];
+
+    const result = splitStringWithStopwords(inputString);
+
+    expect(result).toEqual(expectedOutput);
   });
 });

@@ -23,7 +23,7 @@
     "commands": [
       {
         "command": "dyslexia-text-assistant.assistantView",
-        "title": "Open Text Assistant View"
+        "title": "Text Assistant"
       }
     ],
     "configuration": {

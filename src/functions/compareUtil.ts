@@ -17,6 +17,7 @@
 
 import { Change, diffChars, diffWords } from 'diff';
 import { WordChange } from '../types/types';
+import { splitStringWithStopwords } from './textUtils';
 
 const trimSpaces = (change: WordChange) => ({
   ...change,
@@ -27,9 +28,6 @@ export const compareStopwords = (
   leftText: string,
   rightText: string
 ): Change[] => diffChars(leftText, rightText);
-
-export const splitStringWithStopwords = (inputString: string) =>
-  inputString.match(/[.,!?]|[^.,!?]+/g) || [];
 
 const splitStopwords = (
   changes: WordChange[],

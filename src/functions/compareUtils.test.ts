@@ -21,7 +21,6 @@ import {
   compareWords,
   includeLeftSideChanges,
   includeRightSideChanges,
-  splitStringWithStopwords,
 } from './compareUtil';
 
 describe('compareWords', () => {
@@ -116,16 +115,5 @@ describe('compareWords', () => {
 
     // Assert the rightSide values
     expect(rightSide.map((change) => change.word)).toEqual(['john']);
-  });
-});
-
-describe('splitStringWithSpecialChars', () => {
-  it('should split the input string into an array with special characters preserved', () => {
-    const inputString = '.hei!halo,,';
-    const expectedOutput = ['.', 'hei', '!', 'halo', ',', ','];
-
-    const result = splitStringWithStopwords(inputString);
-
-    expect(result).toEqual(expectedOutput);
   });
 });
