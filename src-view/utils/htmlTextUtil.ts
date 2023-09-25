@@ -33,9 +33,11 @@ export function multiSplit(
     : [inputString];
 }
 
-function escapeRegExp(string: string): string {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+const escapeRegExp = (string: string) =>
+  string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const transformNewlinesToBreaklines = (text: string) =>
+  text.replace(/(?:\r\n|\r|\n)/g, '<br>');
 
 export function surroundWordsWithSpan(section: EditorSection): string {
   const text = section.text;

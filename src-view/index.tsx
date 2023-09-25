@@ -19,20 +19,29 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
 import { SpellingSection } from './types';
+import * as R from 'ramda';
 // import json from './mock-data/spellingSection.json';
 
 import './index.css';
-import { surroundWordsWithSpan } from './utils/htmlTextUtil';
+import {
+  surroundWordsWithSpan,
+  transformNewlinesToBreaklines,
+} from './utils/htmlTextUtil';
 
 const App: React.FC = () => {
   const [original, setOriginal] = useState<string>();
   const [corrected, setCorrected] = useState<string>();
 
+  const transformTextToHtml = R.pipe(
+    surroundWordsWithSpan,
+    transformNewlinesToBreaklines
+  );
+
   window.addEventListener('message', (event) => {
     if (event?.data?.original && event?.data?.corrected) {
       const spellingSection = event?.data as SpellingSection;
-      setOriginal(surroundWordsWithSpan(spellingSection.original));
-      setCorrected(surroundWordsWithSpan(spellingSection.corrected));
+      setOriginal(transformTextToHtml(spellingSection.original));
+      setCorrected(transformTextToHtml(spellingSection.corrected));
     }
   });
   // React.useEffect(() => {
