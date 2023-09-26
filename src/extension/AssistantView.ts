@@ -17,7 +17,7 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { SpellingSection } from '../types/types';
+import { CharPosition, ContentMessage } from '../types/types';
 
 class AssistantView {
   private _panel: vscode.WebviewPanel;
@@ -39,8 +39,12 @@ class AssistantView {
     this._panel.webview.html = this.getWebviewContent();
   }
 
-  updateText(spellingSection: SpellingSection) {
-    this._panel.webview.postMessage(spellingSection);
+  updateText(contentMessage: ContentMessage) {
+    this._panel.webview.postMessage({ contentMessage });
+  }
+
+  updatePosition(charPosition: CharPosition) {
+    this._panel.webview.postMessage({ charPosition });
   }
 
   private getWebviewContent(): string {

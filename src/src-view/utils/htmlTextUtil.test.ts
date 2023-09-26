@@ -16,10 +16,15 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { surroundWordsWithSpan } from './htmlTextUtil';
-import { EditorSection } from '../types';
+import { transformTextToHtml } from './htmlTextUtil';
+import { CharPosition, EditorSection } from '../../types/types';
 
-describe('surroundWordsWithSpan', () => {
+const charPosition: CharPosition = {
+  line: 0,
+  character: 0,
+};
+
+describe('transformTextToHtml', () => {
   it('should surround added words with span tags', () => {
     const section: EditorSection = {
       text: 'The quick brown fox',
@@ -30,7 +35,7 @@ describe('surroundWordsWithSpan', () => {
       ],
     };
 
-    const result = surroundWordsWithSpan(section);
+    const result = transformTextToHtml(section, charPosition);
 
     expect(result).toContain('<span class="added">quick</span>');
     expect(result).toContain('<span class="added">fox</span>');
@@ -49,10 +54,10 @@ describe('surroundWordsWithSpan', () => {
       ],
     };
 
-    const result = surroundWordsWithSpan(section);
+    const result = transformTextToHtml(section, charPosition);
 
     expect(result).toEqual(
-      '<span class="added">quick</span> quick <span class="added">quick</span>'
+      '<span class="currentPosition"></span><span class="added">quick</span> quick <span class="added">quick</span>'
     );
   });
 
@@ -75,10 +80,10 @@ describe('surroundWordsWithSpan', () => {
       ],
     };
 
-    const result = surroundWordsWithSpan(section);
+    const result = transformTextToHtml(section, charPosition);
 
     expect(result).toEqual(
-      'Hei, <span class="removed">bah</span> her er <span class="added">tekst</span>.'
+      '<span class="currentPosition"></span>Hei, <span class="removed">bah</span> her er <span class="added">tekst</span>.'
     );
   });
 
@@ -98,8 +103,10 @@ describe('surroundWordsWithSpan', () => {
       ],
     };
 
-    const result = surroundWordsWithSpan(section);
+    const result = transformTextToHtml(section, charPosition);
 
-    expect(result).toEqual('Hei, på<span class="removed">,</span> deg.');
+    expect(result).toEqual(
+      '<span class="currentPosition"></span>Hei, på<span class="removed">,</span> deg.'
+    );
   });
 });

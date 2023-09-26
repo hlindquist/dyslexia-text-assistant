@@ -16,13 +16,16 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { EditorSection, SpellingSection, WordChange } from '../../types/types';
+import {
+  EditorSection,
+  SpellingSection,
+  WordChange,
+} from '../../../types/types';
 import {
   createCorrectedSection,
   createOriginalSection,
   createSpellingSection,
 } from './spelling';
-import { ilog } from '../../utils/debugUtils';
 
 describe('createOriginalSection', () => {
   it('should return a corrected section with the provided response and text ranges', () => {
@@ -35,7 +38,6 @@ describe('createOriginalSection', () => {
     ];
     const expectedText = 'This are origina';
     const expectedLines = 1;
-    const expectedColor = '#A0D4A4';
     const expectedRanges: WordChange[] = [
       { word: 'This', change: 'skip' },
       { word: 'are', change: 'removed' },
@@ -66,7 +68,6 @@ describe('createCorrectedSection', () => {
 
     const expectedText = 'This is original';
     const expectedLines = 1;
-    const expectedColor = '#00B4FF';
     const expectedRanges: WordChange[] = [
       { word: 'This', change: 'skip' },
       { word: 'is', change: 'added' },

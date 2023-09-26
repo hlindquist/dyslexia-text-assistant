@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-import { ChatResponse } from '../../types/types';
+import { ChatResponse } from '../../../types/types';
 import Ajax from './Ajax';
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';

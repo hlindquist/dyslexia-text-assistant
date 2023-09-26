@@ -22,3 +22,13 @@ export const ilog = (object: any, text?: string) => {
     : console.log(JSON.stringify(object, null, 2));
   return object;
 };
+
+export const getTimeString = () => {
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+  const minutes = currentTime.getMinutes();
+  const seconds = currentTime.getSeconds();
+  const milliseconds = currentTime.getMilliseconds();
+
+  return hours + ':' + minutes + ':' + seconds + '.' + milliseconds;
+};
