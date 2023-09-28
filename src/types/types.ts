@@ -17,15 +17,9 @@
 
 export type ChangeType = 'skip' | 'added' | 'removed';
 
-export interface Location {
-  start: TextPosition;
-  end: TextPosition;
-}
-
 export interface WordChange {
   word: string;
   change: ChangeType;
-  location?: Location;
 }
 
 export interface TextPosition {
@@ -44,7 +38,6 @@ export interface ChatResponse {
 export interface EditorSection {
   text: string;
   lines: number;
-  color: string;
   ranges: WordChange[];
 }
 

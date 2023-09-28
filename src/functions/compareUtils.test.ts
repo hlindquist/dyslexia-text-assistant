@@ -94,7 +94,9 @@ describe('compareWords', () => {
       'Clease',
       'Astrid',
       'did',
-      'go John',
+      'go',
+      ' ',
+      'John',
     ]);
   });
 

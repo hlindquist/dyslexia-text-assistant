@@ -24,7 +24,6 @@ describe('surroundWordsWithSpan', () => {
     const section: EditorSection = {
       text: 'The quick brown fox',
       lines: 1,
-      color: 'black',
       ranges: [
         { word: 'quick', change: 'added' },
         { word: 'fox', change: 'added' },
@@ -37,84 +36,70 @@ describe('surroundWordsWithSpan', () => {
     expect(result).toContain('<span class="added">fox</span>');
   });
 
-  it('should surround removed words with span tags', () => {
-    const section: EditorSection = {
-      text: 'The quick brown fox',
-      lines: 1,
-      color: 'black',
-      ranges: [
-        { word: 'quick', change: 'removed' },
-        { word: 'brown', change: 'removed' },
-      ],
-    };
-
-    const result = surroundWordsWithSpan(section);
-
-    expect(result).toContain('<span class="removed">quick</span>');
-    expect(result).toContain('<span class="removed">brown</span>');
-  });
-
-  it('should not surround unchanged words', () => {
-    const section: EditorSection = {
-      text: 'The quick brown fox',
-      lines: 1,
-      color: 'black',
-      ranges: [
-        { word: 'lazy', change: 'added' },
-        { word: 'dog', change: 'removed' },
-      ],
-    };
-
-    const result = surroundWordsWithSpan(section);
-
-    expect(result).not.toContain('<span class="added">lazy</span>');
-    expect(result).not.toContain('<span class="removed">dog</span>');
-  });
-
   it('should handle multiple occurrences of the same word', () => {
     const section: EditorSection = {
       text: 'quick quick quick',
       lines: 1,
-      color: 'black',
       ranges: [
         { word: 'quick', change: 'added' },
+        { word: ' ', change: 'skip' },
+        { word: 'quick', change: 'skip' },
+        { word: ' ', change: 'skip' },
         { word: 'quick', change: 'added' },
       ],
     };
 
     const result = surroundWordsWithSpan(section);
 
-    expect(result).toContain('<span class="added">quick</span>');
-    expect(result).toContain('<span class="added">quick</span>');
+    expect(result).toEqual(
+      '<span class="added">quick</span> quick <span class="added">quick</span>'
+    );
   });
-
-  // Split the string by multiple tokens
-  // Iterate over the list
-  // Find word number 1, add a span
-  // Remove it from the word list
-  // Find word number 2, add a span
-  // Remove it from the word list
-  // Continue until the word list is empty
-  // Flatten the list of strings
-  // transform the list to a single string
-  // return the new string
 
   it('should surround added and removed words with span tags', () => {
     const section: EditorSection = {
-      text: 'Hei, her er lit tekst å rete, Hei, her er lit tekst å rete.',
+      text: 'Hei, bah her er tekst.',
       lines: 2,
-      color: '#A0D4A4',
       ranges: [
-        { word: 'lit', change: 'removed' },
-        { word: 'lit', change: 'removed' },
-        { word: 'rete', change: 'removed' },
+        { word: 'Hei', change: 'skip' },
+        { word: ',', change: 'skip' },
+        { word: ' ', change: 'skip' },
+        { word: 'bah', change: 'removed' },
+        { word: ' ', change: 'skip' },
+        { word: 'her', change: 'skip' },
+        { word: ' ', change: 'skip' },
+        { word: 'er', change: 'skip' },
+        { word: ' ', change: 'skip' },
+        { word: 'tekst', change: 'added' },
+        { word: '.', change: 'skip' },
       ],
     };
 
     const result = surroundWordsWithSpan(section);
 
-    expect(result).toContain(
-      'Hei, her er <span class="removed">lit</span> tekst å rete, Hei, her er <span class="removed">lit</span> tekst å <span class="removed">rete</span>.'
+    expect(result).toEqual(
+      'Hei, <span class="removed">bah</span> her er <span class="added">tekst</span>.'
     );
+  });
+
+  it('should surround correct instance of word with span tag when multiple instances', () => {
+    const section: EditorSection = {
+      text: 'Hei, på, deg.',
+      lines: 1,
+      ranges: [
+        { word: 'Hei', change: 'skip' },
+        { word: ',', change: 'skip' },
+        { word: ' ', change: 'skip' },
+        { word: 'på', change: 'skip' },
+        { word: ',', change: 'removed' },
+        { word: ' ', change: 'skip' },
+        { word: 'deg', change: 'skip' },
+        { word: '.', change: 'skip' },
+      ],
+    };
+
+    const result = surroundWordsWithSpan(section);
+
+    expect(result).toEqual('Hei, på<span class="removed">,</span> deg.');
   });
 });
