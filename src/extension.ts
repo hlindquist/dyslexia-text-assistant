@@ -16,46 +16,49 @@
  */
 
 import * as vscode from 'vscode';
-import { createSpellingSection } from './functions/modules/spelling';
-import ChatGPT from './actions/adapters/ChatGPT';
-import { debounce } from 'lodash';
+import { isEqual } from 'lodash';
 import AssistantView from './extension/AssistantView';
+import { CharPosition } from './types/types';
 
 export function activate(context: vscode.ExtensionContext) {
-  const configuration = vscode.workspace.getConfiguration();
-  const apiKey =
-    configuration.get<string>('dyslexiaTextAssistant.openAiApiKey') || '';
-  const language =
-    configuration.get<string>('dyslexiaTextAssistant.language') || '';
-  const chat = new ChatGPT(apiKey, language);
   let assistantView: AssistantView | undefined = undefined;
-
-  let debouncedChat = debounce((content: string) => {
-    chat.spellcheck(content).then((response) => {
-      if (response) {
-        const spellingSection = createSpellingSection(content, response);
-        assistantView?.updateText(spellingSection);
-      }
-    });
-  }, 1000);
 
   let lastChange: string | undefined = undefined;
   const handleTextChange = (event: vscode.TextDocumentChangeEvent) => {
-    const activeEditor = vscode.window.activeTextEditor;
-
     if (event.contentChanges.length > 0) {
-      const content = activeEditor?.document.getText();
-      if (content !== lastChange) {
-        lastChange = content;
+      const activeEditor = vscode.window.activeTextEditor;
 
-        if (content) {
-          debouncedChat(content);
+      const text = activeEditor?.document.getText();
+      if (text !== lastChange) {
+        const configuration = vscode.workspace.getConfiguration();
+        const apiKey =
+          configuration.get<string>('dyslexiaTextAssistant.openAiApiKey') || '';
+        const language =
+          configuration.get<string>('dyslexiaTextAssistant.language') || '';
+        const charPosition = activeEditor?.selection.active as CharPosition;
+        lastChange = text;
+
+        if (text) {
+          assistantView?.updateText({
+            text,
+            language,
+            apiKey,
+            charPosition,
+          });
         }
       }
     }
   };
 
   vscode.workspace.onDidChangeTextDocument(handleTextChange);
+
+  let lastPosition: CharPosition | undefined = undefined;
+  vscode.window.onDidChangeTextEditorSelection((event) => {
+    if (!isEqual(lastPosition, event.textEditor.selection.active)) {
+      assistantView?.updatePosition(event.textEditor.selection.active);
+      lastPosition = event.textEditor.selection.active;
+    }
+  });
 
   let assistantViewCommand = vscode.commands.registerCommand(
     'dyslexia-text-assistant.assistantView',

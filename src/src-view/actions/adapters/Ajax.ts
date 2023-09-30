@@ -15,10 +15,24 @@
  * Author: Håkon Lindquist
  */
 
-/* eslint-disable no-undef */
-export const ilog = (object: any, text?: string) => {
-  text
-    ? console.log(text + ':\n', JSON.stringify(object, null, 2))
-    : console.log(JSON.stringify(object, null, 2));
-  return object;
-};
+import axios, { AxiosResponse } from 'axios';
+import { AjaxResponse, RestRequest } from '../../../types/types';
+
+function transformAxiosResponse<T>(
+  axiosResponse: AxiosResponse<T>
+): AjaxResponse<T> {
+  return {
+    data: axiosResponse.data,
+  };
+}
+
+class Ajax {
+  static post = async <T>(request: RestRequest): Promise<AjaxResponse<T>> =>
+    axios
+      .post<T>(request.url, request.body, {
+        headers: request.headers,
+      })
+      .then((response) => transformAxiosResponse(response));
+}
+
+export default Ajax;

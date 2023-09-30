@@ -15,24 +15,29 @@
  * Author: Håkon Lindquist
  */
 
-import axios, { AxiosResponse } from 'axios';
-import { AjaxResponse, Request } from '../../types/types';
-
-function transformAxiosResponse<T>(
-  axiosResponse: AxiosResponse<T>
-): AjaxResponse<T> {
-  return {
-    data: axiosResponse.data,
-  };
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "target": "es6",
+    "outDir": "../local-dist",
+    "lib": ["es6", "dom"],
+    "jsx": "react",
+    "rootDir": "../",
+    "sourceMap": true,
+    "composite": true,
+    "noUnusedLocals": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "../utils/**/*.ts",
+    "../types/**/*.ts",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./**/*.json",
+  ],
 }
-
-class Ajax {
-  static post = async <T>(request: Request): Promise<AjaxResponse<T>> =>
-    axios
-      .post<T>(request.url, request.body, {
-        headers: request.headers,
-      })
-      .then((response) => transformAxiosResponse(response));
-}
-
-export default Ajax;

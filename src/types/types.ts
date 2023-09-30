@@ -22,6 +22,16 @@ export interface WordChange {
   change: ChangeType;
 }
 
+export interface TextToken {
+  original: string;
+  modified: string;
+}
+
+export interface CharPosition {
+  line: number;
+  character: number;
+}
+
 export interface TextPosition {
   line: number;
   character: number;
@@ -46,7 +56,7 @@ export interface SpellingSection {
   corrected: EditorSection;
 }
 
-export interface Request {
+export interface RestRequest {
   url: string;
   body: any;
   headers: object;
@@ -54,4 +64,11 @@ export interface Request {
 
 export interface AjaxResponse<T> {
   data: T;
+}
+
+export interface ContentMessage {
+  text: string;
+  language: string;
+  apiKey: string;
+  charPosition: CharPosition;
 }

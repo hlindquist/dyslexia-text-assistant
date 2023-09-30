@@ -15,7 +15,11 @@
  * Author: Håkon Lindquist
  */
 
-import { EditorSection, SpellingSection, WordChange } from '../../types/types';
+import {
+  EditorSection,
+  SpellingSection,
+  WordChange,
+} from '../../../types/types';
 import { compareWords } from '../compareUtil';
 
 export const createSpellingSection = (

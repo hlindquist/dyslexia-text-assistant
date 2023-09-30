@@ -1,0 +1,46 @@
+{
+  "original": {
+    "text": "Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete. Hei, her er lit tekst å rete, Hei, her er lit tekst å rete.",
+    "lines": 2,
+    "ranges": [
+      {
+        "word": "lit",
+        "change": "removed"
+      },
+      {
+        "word": "lit",
+        "change": "removed"
+      },
+      {
+        "word": "rete",
+        "change": "removed"
+      }
+    ]
+  },
+  "corrected": {
+    "text": "Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette. Hei, her er en liten tekst å rette.",
+    "lines": 2,
+    "ranges": [
+      {
+        "word": "en",
+        "change": "added"
+      },
+      {
+        "word": "liten",
+        "change": "added"
+      },
+      {
+        "word": "en",
+        "change": "added"
+      },
+      {
+        "word": "liten",
+        "change": "added"
+      },
+      {
+        "word": "rette",
+        "change": "added"
+      }
+    ]
+  }
+}

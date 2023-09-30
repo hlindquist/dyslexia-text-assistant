@@ -15,43 +15,44 @@
  * Author: Håkon Lindquist
  */
 
-export type ChangeType = 'skip' | 'added' | 'removed';
-
-export interface WordChange {
-  word: string;
-  change: ChangeType;
+body {
+  background-color: #fafafa;
+  color: #3C3C3C;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 600;
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
 }
 
-export interface TextPosition {
-  line: number;
-  character: number;
+.added {
+  color: #428BCA;
 }
 
-export interface ChatResponse {
-  choices?: {
-    message?: {
-      content: string;
-    };
-  }[];
+.removed {
+  color: #CA6E42;
 }
 
-export interface EditorSection {
-  text: string;
-  lines: number;
-  ranges: WordChange[];
+.originalWrapper {
+  padding: 16px;
+  background-color: #f0f0f0;
+
+  .original {
+    max-height: 1.25 * 10rem;
+    overflow-y: hidden;
+  }
 }
 
-export interface SpellingSection {
-  original: EditorSection;
-  corrected: EditorSection;
+.correctedWrapper {
+  padding: 16px;
+
+  .corrected {
+    max-height: 1.25 * 10rem;
+    overflow-y: hidden;
+  }
 }
 
-export interface Request {
-  url: string;
-  body: any;
-  headers: object;
-}
-
-export interface AjaxResponse<T> {
-  data: T;
+.currentPosition {
+  width: 0;
 }

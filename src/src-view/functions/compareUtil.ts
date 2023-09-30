@@ -16,7 +16,7 @@
  */
 
 import { Change, diffChars, diffWords } from 'diff';
-import { WordChange } from '../types/types';
+import { WordChange } from '../../types/types';
 import { splitStringWithStopwords } from './textUtils';
 
 export const compareStopwords = (
