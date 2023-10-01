@@ -31,8 +31,7 @@ const extensionConfig = {
       },
     ],
   },
-
-  devtool: 'nosources-source-map',
+  devtool: 'source-map',
   infrastructureLogging: {
     level: 'log',
   },
@@ -92,6 +91,8 @@ const viewConfig = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
   ],
+
+  devtool: 'source-map',
 };
 
 module.exports = [viewConfig, extensionConfig];

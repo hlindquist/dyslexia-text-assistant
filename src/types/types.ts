@@ -72,3 +72,13 @@ export interface ContentMessage {
   apiKey: string;
   charPosition: CharPosition;
 }
+
+export interface TextAssistantState {
+  openAiApiKey: string | undefined;
+  language: string | undefined;
+  text: string | undefined;
+  charPosition: CharPosition | undefined;
+  spellingSection: SpellingSection | undefined;
+  originalHtml: string | undefined;
+  correctedHtml: string | undefined;
+}
