@@ -17,10 +17,8 @@ describe('splitFullSentences', () => {
       { original: 'Single.Sentence.', modified: 'Single.Sentence.' },
     ];
 
-    // Call the function and assign the result to a variable
     const result: TextToken[] = splitFullSentences(tokens);
 
-    // Define the expected result based on the input
     const expected: TextToken[] = [
       { original: 'Sentence one', modified: 'Sentence one' },
       { original: '.', modified: '.' },
@@ -37,7 +35,6 @@ describe('splitFullSentences', () => {
       { original: '.', modified: '.' },
     ];
 
-    // Use Jest's expect function to assert that the result matches the expected output
     expect(result).toEqual(expected);
   });
 
@@ -47,10 +44,8 @@ describe('splitFullSentences', () => {
       { original: 'Single Sentence', modified: 'Single Sentence' },
     ];
 
-    // Call the function and assign the result to a variable
     const result: TextToken[] = splitFullSentences(tokens);
 
-    // The result should be the same as the input since there are no periods to split
     expect(result).toEqual(tokens);
   });
 });

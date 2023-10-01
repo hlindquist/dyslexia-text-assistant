@@ -29,7 +29,6 @@ import {
 
 describe('createOriginalSection', () => {
   it('should return a corrected section with the provided response and text ranges', () => {
-    // Arrange
     const content = 'This are origina';
     const wordChanges: WordChange[] = [
       { word: 'This', change: 'skip' },
@@ -44,10 +43,8 @@ describe('createOriginalSection', () => {
       { word: 'origina', change: 'removed' },
     ];
 
-    // Act
     const result: EditorSection = createOriginalSection(content, wordChanges);
 
-    // Assert
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
     expect(result.ranges).toEqual(expectedRanges);
@@ -56,7 +53,6 @@ describe('createOriginalSection', () => {
 
 describe('createCorrectedSection', () => {
   it('should return a corrected section with the provided response and text ranges', () => {
-    // Arrange
     const response = 'This is original';
     const wordChanges: WordChange[] = [
       { word: 'This', change: 'skip' },
@@ -74,7 +70,6 @@ describe('createCorrectedSection', () => {
       { word: 'original', change: 'added' },
     ];
 
-    // Assert
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
     expect(result.ranges).toEqual(expectedRanges);
@@ -83,13 +78,11 @@ describe('createCorrectedSection', () => {
 
 describe('createSpellingSections', () => {
   it('should return an array of EditorSection objects', () => {
-    // Arrange
     const content = 'Angus. Helo world';
     const response = 'Angus, Hello my world';
 
     const result: SpellingSection = createSpellingSection(content, response);
 
-    // Assert the original section
     const originalSection = result.original;
 
     expect(originalSection.lines).toBe(1);
@@ -120,7 +113,6 @@ describe('createSpellingSections', () => {
       },
     ]);
 
-    // Assert the corrected section
     const correctedSection = result.corrected;
     expect(correctedSection.lines).toBe(1);
     expect(correctedSection.ranges).toEqual([

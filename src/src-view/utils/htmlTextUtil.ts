@@ -90,80 +90,51 @@ export const insertsCharacterPositionElement = (
   tokens: TextToken[],
   position: number
 ): TextToken[] => {
-  const modifiedTokens = [...tokens]; // Create a copy of the original tokens array
+  const modifiedTokens = [...tokens];
 
-  // Find the location of the token that corresponds to the given position using the 'original' property
-  let insertIndex = 0;
-  for (let i = 0; i < modifiedTokens.length; i++) {
-    const token = modifiedTokens[i];
-    if (position <= token.original.length) {
-      insertIndex = i;
-      break;
-    } else {
-      position -= token.original.length;
-    }
-  }
+  const insertIndex = modifiedTokens.findIndex(
+    (token) => (position -= token.original.length) <= 0
+  );
 
-  // Insert a TextToken just before the found token
-  const emptySpanToken: TextToken = {
+  modifiedTokens.splice(insertIndex, 0, {
     original: '',
     modified: '<span class="currentPosition"></span>',
-  };
-  modifiedTokens.splice(insertIndex, 0, emptySpanToken);
+  });
 
   return modifiedTokens;
 };
 
-// get position ignoring newlines and breaklines
 export const getPositionIgnoringNewlines = (
   charPosition: CharPosition,
   text: string
 ): number => {
-  try {
-    const { line, character } = charPosition;
-    const lines = text.split('\n'); // Split the text into lines
-    let currentPosition = 0;
+  const { line, character } = charPosition;
+  const lines = text.split('\n');
+  let currentPosition = 0;
 
-    // Validate line and character positions
-    if (line < 0 || line >= lines.length || character < 0) {
-      throw new Error('Invalid line or character position');
-    }
-
-    // Iterate through the lines up to the specified line
-    for (let i = 0; i < line; i++) {
-      currentPosition += lines[i].length; // Add the length of each line
-    }
-
-    // Add the character position within the specified line
-    currentPosition += character;
-
-    return currentPosition;
-  } catch {
-    return text.length;
+  for (let i = 0; i < line; i++) {
+    currentPosition += lines[i].length;
   }
+
+  currentPosition += character;
+
+  return currentPosition;
 };
 
-// Splits tokens with original props that contain periods, and where the original and modified values are the same.
-// Outputs a modified version of the original tokens array with new elements containing the same modfified and original values.
 export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
   const resultArray: TextToken[] = [];
 
   tokens.forEach((token) => {
     if (token.original.includes('.') && token.original === token.modified) {
-      // Split the token into multiple tokens at each period
       const sentences = token.original.split('.');
       sentences.forEach((sentence, index) => {
-        // Only add non-empty sentences to the result
         if (sentence.trim() !== '') {
-          // Create a new TextToken for each sentence
           const newToken: TextToken = {
             original: sentence,
-            modified: sentence, // Keep the split value as is
+            modified: sentence,
           };
-          // Add the new token to the result array
           resultArray.push(newToken);
         }
-        // Add a period after each sentence except the last one
         if (index < sentences.length - 1) {
           const periodToken: TextToken = {
             original: '.',
@@ -173,7 +144,6 @@ export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
         }
       });
     } else {
-      // If the token doesn't meet the conditions, add it unchanged to the result
       resultArray.push(token);
     }
   });

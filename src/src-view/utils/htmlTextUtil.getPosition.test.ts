@@ -8,7 +8,7 @@ describe('getPositionIgnoringNewlines', () => {
 
     const position = getPositionIgnoringNewlines(charPosition, text);
 
-    expect(position).toBe(24); // 'T' (line 1) + 'h' + 'i' + 's' + ' ' (line 2)
+    expect(position).toBe(24);
   });
 
   it('should calculate position correctly for a character at the beginning of a line', () => {
@@ -17,7 +17,7 @@ describe('getPositionIgnoringNewlines', () => {
 
     const position = getPositionIgnoringNewlines(charPosition, text);
 
-    expect(position).toBe(40); // 'T' (line 1) + 'h' + 'i' + 's' + ' ' (line 2) + 'w'
+    expect(position).toBe(40);
   });
 
   it('should calculate position correctly for a character at the end of a line', () => {
@@ -26,6 +26,6 @@ describe('getPositionIgnoringNewlines', () => {
 
     const position = getPositionIgnoringNewlines(charPosition, text);
 
-    expect(position).toBe(18); // 'T' + 'h' + 'i' + 's' + ' ' + 'i' + 's' + ' ' + 'a' + ' ' + 't' + 'e' + 's' + 't' + ' ' + 's' + 't' + 'r' + 'i' + 'n' + 'g'
+    expect(position).toBe(18);
   });
 });
