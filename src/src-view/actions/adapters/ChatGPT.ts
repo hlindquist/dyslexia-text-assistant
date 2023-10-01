@@ -35,7 +35,7 @@ const createPrompt = (promptText: string, language: string) => ({
     },
     { role: 'user', content: promptText },
   ],
-  temperature: 0.6,
+  temperature: 0,
 });
 
 const createRequest = (

@@ -58,9 +58,10 @@ export const surroundWordsWithSpan = (
   splitText: string[]
 ): TextToken[] => {
   const resultArray: TextToken[] = [];
+  const changes = wordChanges.slice();
 
   splitText.forEach((text: string) => {
-    const nextChange = wordChanges[0];
+    const nextChange = changes[0];
     if (text === nextChange?.word) {
       if (['removed', 'added'].includes(nextChange.change)) {
         resultArray.push({
@@ -73,7 +74,7 @@ export const surroundWordsWithSpan = (
           modified: nextChange.word,
         });
       }
-      wordChanges.shift();
+      changes.shift();
     } else {
       resultArray.push({
         original: text,

@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const viewLocalConfig = {
   target: 'web',
-  mode: 'none',
+  mode: 'development',
   entry: './src/src-view/index.tsx',
   devServer: {
     port: 8080,
@@ -61,6 +61,8 @@ const viewLocalConfig = {
       filename: 'index.html',
     }),
   ],
+
+  devtool: 'source-map',
 };
 
 module.exports = [viewLocalConfig];

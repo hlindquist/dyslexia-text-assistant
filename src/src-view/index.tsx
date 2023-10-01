@@ -17,44 +17,21 @@
 
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
-import { useEffect, useState } from 'react';
-import json from './mock-data/spellingSection.json';
-import { useDebouncedCallback } from 'use-debounce';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import './index.scss';
+import './actions/extensionListener';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 import {
-  CharPosition,
-  ContentMessage,
-  EditorSection,
-  SpellingSection,
-} from '../types/types';
-import { transformTextToHtml } from './utils/htmlTextUtil';
-import ChatGPT from './actions/adapters/ChatGPT';
-import { createSpellingSection } from './functions/modules/spelling';
-
-const debug = false;
-
-const charPositionDebug = {
-  line: 0,
-  character: 220,
-};
+  selectCorrectedHtml,
+  selectOriginalHtml,
+} from './redux/textAssistantSlice';
 
 const App: React.FC = () => {
-  const [originalSection, setOriginalSection] = useState<EditorSection>();
-  const [correctedSection, setCorrectedSection] = useState<EditorSection>();
-  const [original, setOriginal] = useState<string>();
-  const [corrected, setCorrected] = useState<string>();
-  const [charPosition, setCharPosition] = useState<CharPosition>();
-  const [contentMessage, setContentMessage] = useState<ContentMessage>();
-
-  useEffect(() => {
-    scrollToTarget('.original', '.currentPosition');
-    scrollToTarget('.corrected', '.currentPosition');
-  }, [original]);
-
-  useEffect(() => {
-    generateWithNewPosition();
-  }, [charPosition]);
+  const originalHtml = useSelector(selectOriginalHtml);
+  const correctedHtml = useSelector(selectCorrectedHtml);
 
   const handleResize = () => {
     scrollToTarget('.original', '.currentPosition');
@@ -62,83 +39,16 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
+    scrollToTarget('.original', '.currentPosition');
+    scrollToTarget('.corrected', '.currentPosition');
+  }, [originalHtml, correctedHtml]);
+
+  useEffect(() => {
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
-
-  const callChat = () => {
-    if (
-      contentMessage?.text.length > 0 &&
-      contentMessage?.apiKey &&
-      contentMessage?.language
-    ) {
-      const chat = new ChatGPT(contentMessage.apiKey, contentMessage.language);
-      chat.spellcheck(contentMessage.text).then((response) => {
-        if (response) {
-          const spellingSection = createSpellingSection(
-            contentMessage.text,
-            response
-          );
-          setOriginalSection(spellingSection.original);
-          setOriginal(
-            transformTextToHtml(spellingSection.original, charPosition)
-          );
-          setCorrectedSection(spellingSection.corrected);
-          setCorrected(
-            transformTextToHtml(spellingSection.corrected, charPosition)
-          );
-        }
-      });
-    }
-  };
-
-  const generateWithNewPosition = () => {
-    if (originalSection && correctedSection && charPosition) {
-      setOriginal(transformTextToHtml(originalSection, charPosition));
-      setCorrected(transformTextToHtml(correctedSection, charPosition));
-    }
-  };
-
-  const debouncedCallChat = useDebouncedCallback(callChat, 1000);
-
-  useEffect(() => {
-    if (
-      contentMessage?.text.length > 0 &&
-      contentMessage?.apiKey &&
-      contentMessage?.language
-    ) {
-      debouncedCallChat();
-    }
-  }, [contentMessage]);
-
-  window.addEventListener('message', (event) => {
-    if (!debug) {
-      const contentMessage: ContentMessage = event?.data.contentMessage;
-      if (contentMessage?.text) {
-        setContentMessage(contentMessage);
-      }
-
-      const messageCharPosition: CharPosition = event?.data?.charPosition;
-      if (messageCharPosition?.character) {
-        setCharPosition(messageCharPosition);
-      }
-    }
-  });
-
-  React.useEffect(() => {
-    if (debug) {
-      const spellingSection = json as SpellingSection;
-      setOriginal(
-        transformTextToHtml(spellingSection.original, charPositionDebug)
-      );
-      setCorrected(
-        transformTextToHtml(spellingSection.corrected, charPositionDebug)
-      );
-      setCharPosition({ line: 0, character: 20 });
-    }
   }, []);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -149,12 +59,12 @@ const App: React.FC = () => {
     event.preventDefault();
   };
 
-  return original && corrected ? (
+  return originalHtml && correctedHtml ? (
     <div>
       <div className="originalWrapper">
         <div
           className="original"
-          dangerouslySetInnerHTML={{ __html: original }}
+          dangerouslySetInnerHTML={{ __html: originalHtml }}
           onMouseDown={handleMouseDown}
           onDragStart={handleDragStart}
         />
@@ -162,14 +72,14 @@ const App: React.FC = () => {
       <div className="correctedWrapper">
         <div
           className="corrected"
-          dangerouslySetInnerHTML={{ __html: corrected }}
+          dangerouslySetInnerHTML={{ __html: correctedHtml }}
           onMouseDown={handleMouseDown}
           onDragStart={handleDragStart}
         />
       </div>
     </div>
   ) : (
-    <div>No messages</div>
+    <></>
   );
 };
 
@@ -203,4 +113,8 @@ function getLinesNumber(height: number) {
 }
 
 const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
