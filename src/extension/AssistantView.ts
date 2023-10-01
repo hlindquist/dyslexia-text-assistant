@@ -68,7 +68,7 @@ class AssistantView {
             <title>Assistant View</title>
         </head>
         <body>
-            <div id="root">This is a start</div>
+            <div id="root"></div>
           <script src="${appUri}" nonce="${nonce}"></script>
         </body>
       </html>`;

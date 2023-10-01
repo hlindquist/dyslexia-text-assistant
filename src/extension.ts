@@ -25,7 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   let lastChange: string | undefined = undefined;
   const handleTextChange = (event: vscode.TextDocumentChangeEvent) => {
-    if (event.contentChanges.length > 0) {
+    if (event?.contentChanges?.length > 0) {
       const activeEditor = vscode.window.activeTextEditor;
 
       const text = activeEditor?.document.getText();

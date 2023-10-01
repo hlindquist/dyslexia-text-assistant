@@ -29,7 +29,7 @@ const splitStopwords = (
   currentChange: WordChange
 ): WordChange[] => {
   const splitChanges = splitStringWithStopwords(currentChange.word);
-  if (currentChange.word.length > 1 && splitChanges.length > 1) {
+  if (currentChange?.word?.length > 1 && splitChanges?.length > 1) {
     const splittedList = splitChanges
       .filter((word) => word !== '')
       .map(

@@ -19,7 +19,7 @@ export const splitStringWithStopwords = (inputString: string) => {
   const result = [];
   let currentWord = '';
 
-  for (let i = 0; i < inputString.length; i++) {
+  for (let i = 0; i < inputString?.length; i++) {
     const char = inputString[i];
 
     if (/[.,!? ]/.test(char)) {

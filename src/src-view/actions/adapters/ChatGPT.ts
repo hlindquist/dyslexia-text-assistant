@@ -30,12 +30,20 @@ const createPrompt = (promptText: string, language: string) => ({
   messages: [
     {
       role: 'system',
-      content: `You are correcting spelling mistakes in all the texts I send you.
-    You correct them in ${language}.`,
+      content: `
+You are correcting spelling mistakes in all the texts I send you.
+Add a period to lines of texts that have a newline, but not a period at the end.
+You are conservative when correcting.
+You do not delete repeated words or sentences.
+You keep lines without period, but with newline, inside the corrected text.
+The texts I send you are in ${language}.`,
     },
     { role: 'user', content: promptText },
   ],
   temperature: 0,
+  presence_penalty: 0,
+  frequency_penalty: 0,
+  top_p: 0,
 });
 
 const createRequest = (
@@ -66,7 +74,7 @@ class ChatGPT {
 
         if (
           responseData.choices &&
-          responseData.choices.length > 0 &&
+          responseData.choices?.length > 0 &&
           responseData.choices[0].message
         ) {
           return responseData.choices[0].message.content;
