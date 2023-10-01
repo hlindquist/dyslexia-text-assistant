@@ -33,17 +33,14 @@ describe('compareWords', () => {
     const leftSide = includeLeftSideChanges(result);
     const rightSide = includeRightSideChanges(result);
 
-    // Assert that the result is an array
     expect(Array.isArray(result)).toBe(true);
 
-    // Assert the leftSide values
     expect(leftSide.map((change) => change.word)).toEqual([
       'world',
       'john',
       'world',
     ]);
 
-    // Assert the rightSide values
     expect(rightSide.map((change) => change.word)).toEqual([
       'universe',
       'teddy',
@@ -59,13 +56,10 @@ describe('compareWords', () => {
     const leftSide = includeLeftSideChanges(result);
     const rightSide = includeRightSideChanges(result);
 
-    // Assert that the result is an array
     expect(Array.isArray(result)).toBe(true);
 
-    // Assert the leftSide values
     expect(leftSide.map((change) => change.word)).toEqual(['.', 'john']);
 
-    // Assert the rightSide values
     expect(rightSide.map((change) => change.word)).toEqual(['!', 'teddy', ',']);
   });
 
@@ -78,10 +72,8 @@ describe('compareWords', () => {
     const leftSide = includeLeftSideChanges(result);
     const rightSide = includeRightSideChanges(result);
 
-    // Assert that the result is an array
     expect(Array.isArray(result)).toBe(true);
 
-    // Assert the leftSide values
     expect(leftSide.map((change) => change.word)).toEqual([
       'John',
       'Clease',
@@ -89,7 +81,6 @@ describe('compareWords', () => {
       'going',
     ]);
 
-    // Assert the rightSide values
     expect(rightSide.map((change) => change.word)).toEqual([
       'Clease',
       'Astrid',
@@ -109,13 +100,10 @@ describe('compareWords', () => {
     const leftSide = includeLeftSideChanges(result);
     const rightSide = includeRightSideChanges(result);
 
-    // Assert that the result is an array
     expect(Array.isArray(result)).toBe(true);
 
-    // Assert the leftSide values
     expect(leftSide.map((change) => change.word)).toEqual(['John']);
 
-    // Assert the rightSide values
     expect(rightSide.map((change) => change.word)).toEqual(['john']);
   });
 });

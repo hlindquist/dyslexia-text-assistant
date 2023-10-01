@@ -102,11 +102,9 @@ function scrollToTarget(parent: string, target: string) {
 }
 
 function getLinesNumber(height: number) {
-  // Define the values of the equation
   const leftSide = height / 2;
   const rightSide = 16 * 1.25;
 
-  // Calculate the approximate value of x
   const x = Math.ceil(leftSide / rightSide);
 
   return x;

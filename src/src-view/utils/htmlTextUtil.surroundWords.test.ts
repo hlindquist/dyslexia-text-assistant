@@ -13,14 +13,12 @@ describe('surroundWordsWithSpan', () => {
 
     const result: TextToken[] = surroundWordsWithSpan(wordChanges, splitText);
 
-    // Define the expected result based on the input
     const expected: TextToken[] = [
       { original: 'apple', modified: '<span class="added">apple</span>' },
       { original: 'banana', modified: '<span class="removed">banana</span>' },
       { original: 'cherry', modified: 'cherry' },
     ];
 
-    // Use Jest's expect function to assert that the result matches the expected output
     expect(result).toEqual(expected);
   });
 
@@ -34,16 +32,12 @@ describe('surroundWordsWithSpan', () => {
 
     const result: TextToken[] = surroundWordsWithSpan(wordChanges, splitText);
 
-    // Define the expected result based on the input
     const expected: TextToken[] = [
       { original: 'apple', modified: 'apple' },
       { original: 'banana', modified: 'banana' },
       { original: 'cherry', modified: 'cherry' },
     ];
 
-    // Use Jest's expect function to assert that the result matches the expected output
     expect(result).toEqual(expected);
   });
-
-  // Add more test cases as needed to cover different scenarios
 });
