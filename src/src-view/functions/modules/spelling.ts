@@ -40,7 +40,7 @@ export const createOriginalSection = (
 ) => {
   const originalSection = {
     text: content,
-    lines: content.split('\n').length,
+    lines: content.split('\n')?.length,
     ranges: wordChanges.filter((change) =>
       ['removed', 'skip'].includes(change.change)
     ),
@@ -54,7 +54,7 @@ export const createCorrectedSection = (
 ) => {
   const correctedSection = {
     text: response,
-    lines: response.split('\n').length,
+    lines: response.split('\n')?.length,
     ranges: wordChanges.filter((change) =>
       ['added', 'skip'].includes(change.change)
     ),

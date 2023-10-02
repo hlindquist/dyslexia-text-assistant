@@ -35,7 +35,7 @@ export function multiSplit(
 
   const parts = inputString.split(new RegExp(regexPattern));
 
-  return tokensToSplitOn.length && inputString !== ''
+  return tokensToSplitOn?.length && inputString !== ''
     ? parts.filter((part) => !!part && part !== '')
     : [inputString];
 }
@@ -93,7 +93,7 @@ export const insertsCharacterPositionElement = (
   const modifiedTokens = [...tokens];
 
   const insertIndex = modifiedTokens.findIndex(
-    (token) => (position -= token.original.length) <= 0
+    (token) => (position -= token.original?.length) <= 0
   );
 
   modifiedTokens.splice(insertIndex, 0, {
@@ -113,7 +113,7 @@ export const getPositionIgnoringNewlines = (
   let currentPosition = 0;
 
   for (let i = 0; i < line; i++) {
-    currentPosition += lines[i].length;
+    currentPosition += lines[i]?.length;
   }
 
   currentPosition += character;
@@ -135,7 +135,7 @@ export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
           };
           resultArray.push(newToken);
         }
-        if (index < sentences.length - 1) {
+        if (index < sentences?.length - 1) {
           const periodToken: TextToken = {
             original: '.',
             modified: '.',
