@@ -24,7 +24,8 @@ export interface WordChange {
 
 export interface TextToken {
   original: string;
-  modified: string;
+  modified?: string;
+  type?: ChangeType | 'current';
 }
 
 export interface CharPosition {
@@ -48,7 +49,7 @@ export interface ChatResponse {
 export interface EditorSection {
   text: string;
   lines: number;
-  ranges: WordChange[];
+  changes: WordChange[];
 }
 
 export interface SpellingSection {

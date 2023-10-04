@@ -21,8 +21,11 @@ export function multiSplit(
     : [inputString];
 }
 
+export const transformTextsToTextTokens = (texts: string[]): TextToken[] =>
+  texts.map((text) => ({ original: text }));
+
 export const splitText = (section: EditorSection): string[] => {
-  const wordChanges: WordChange[] = section.ranges || [];
+  const wordChanges: WordChange[] = section.changes || [];
   const allWords = wordChanges.map((change) => change.word);
   const tokensToSplitOn = Array.from(new Set(allWords));
   return multiSplit(section.text, tokensToSplitOn);
@@ -49,22 +52,19 @@ export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
   const resultArray: TextToken[] = [];
 
   tokens.forEach((token) => {
-    if (token.original.includes('.') && token.original === token.modified) {
+    if (token.original.includes('.')) {
       const sentences = token.original.split('.');
       sentences.forEach((sentence, index) => {
         if (sentence.trim() !== '') {
+          let originalSentence = sentence;
+          if (index < sentences.length - 1) {
+            originalSentence += '.';
+          }
           const newToken: TextToken = {
-            original: sentence,
-            modified: sentence,
+            original: originalSentence.trim(),
+            modified: originalSentence.trim(),
           };
           resultArray.push(newToken);
-        }
-        if (index < sentences?.length - 1) {
-          const periodToken: TextToken = {
-            original: '.',
-            modified: '.',
-          };
-          resultArray.push(periodToken);
         }
       });
     } else {

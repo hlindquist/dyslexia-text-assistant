@@ -15,86 +15,84 @@
  * Author: Håkon Lindquist
  */
 
-import {
-  CharPosition,
-  EditorSection,
-  TextToken,
-  WordChange,
-} from '../../types/types';
+import { CharPosition, EditorSection, TextToken } from '../../types/types';
 import * as R from 'ramda';
+import { isDefined } from '../../utils/generalUtils';
+import {
+  identifyChangeTypesInText,
+  insertsCharacterPositionToken,
+} from './textTokenUtils';
 import {
   getPositionIgnoringNewlines,
-  splitFullSentences,
   splitText,
+  transformTextsToTextTokens,
 } from './textUtils';
 
 /* eslint-disable indent */
 export const transformNewlinesToBreaklines = (text: string) =>
   text.replace(/(?:\r\n|\r|\n)/g, '<br>');
 
-export const surroundWordsWithSpan = (
-  wordChanges: WordChange[],
-  splitText: string[]
-): TextToken[] => {
-  const resultArray: TextToken[] = [];
-  const changes = wordChanges.slice();
+const transformCurrentToken = (token: TextToken) =>
+  token.type === 'current'
+    ? { ...token, modified: '<span class="currentPosition"></span>' }
+    : token;
 
-  splitText.forEach((text: string) => {
-    const nextChange = changes[0];
-    if (text === nextChange?.word) {
-      if (['removed', 'added'].includes(nextChange.change)) {
-        resultArray.push({
-          original: nextChange.word,
-          modified: `<span class="${nextChange.change}">${nextChange.word}</span>`,
-        });
-      } else {
-        resultArray.push({
-          original: nextChange.word,
-          modified: nextChange.word,
-        });
+const transformAddedOrRemovedTokens = (token: TextToken) =>
+  ['added', 'removed'].includes(token?.type || '')
+    ? {
+        ...token,
+        modified: `<span class="${token.type}">${token.original}</span>`,
       }
-      changes.shift();
-    } else {
-      resultArray.push({
-        original: text,
-        modified: text,
-      });
-    }
-  });
+    : token;
 
-  return resultArray;
-};
+const transformSkippedToken = (token: TextToken) =>
+  token.type === 'skip' ? { ...token, modified: token.original } : token;
 
-export const insertsCharacterPositionElement = (
-  tokens: TextToken[],
-  position: number
-): TextToken[] => {
-  const modifiedTokens = [...tokens];
+export const transformTokens = (tokens: TextToken[]): TextToken[] =>
+  tokens
+    .map(transformCurrentToken)
+    .map(transformAddedOrRemovedTokens)
+    .map(transformSkippedToken);
 
-  const insertIndex = modifiedTokens.findIndex(
-    (token) => (position -= token.original?.length) <= 0
-  );
+const getModifiedValues = (tokens: TextToken[]): string[] =>
+  tokens.map((token) => token.modified).filter(isDefined);
 
-  modifiedTokens.splice(insertIndex, 0, {
-    original: '',
-    modified: '<span class="currentPosition"></span>',
-  });
+const transformToSingleString = (texts: string[]) => texts.join('');
 
-  return modifiedTokens;
-};
+// interface Sentence {
+//   text: string;
+//   tokens?: TextToken;
+//   complete?: boolean;
+// }
+
+// const sentenceRegex = (text: string) => text.split(/[\\.\\!\\?]/);
+
+// const isCompleteSentence = (text: string): boolean =>
+//   /[.!?]$/.test(text.trim());
+
+// const splitIntoSentences = (text: string): Sentence[] =>
+//   sentenceRegex(text)
+//     .filter((sentence) => sentence !== '')
+//     .map((sentence) => ({
+//       text: sentence,
+//       complete: isCompleteSentence(sentence),
+//     }));
 
 export const transformTextToHtml = (
   section: EditorSection,
   charPosition: CharPosition
 ) => {
   const position = getPositionIgnoringNewlines(charPosition, section.text);
+  const changes = section.changes;
+
   return R.pipe(
-    splitText,
-    (texts: string[]) => surroundWordsWithSpan(section.ranges, texts),
-    (tokens: TextToken[]) => splitFullSentences(tokens),
-    (tokens: TextToken[]) => insertsCharacterPositionElement(tokens, position),
-    (tokens: TextToken[]) => tokens.map(R.prop('modified')),
-    (texts: string[]) => texts.join(''),
-    transformNewlinesToBreaklines
+    (section: EditorSection): string[] => splitText(section),
+    (texts: string[]) => transformTextsToTextTokens(texts),
+    (texts: TextToken[]) => identifyChangeTypesInText(changes, texts),
+    (tokens: TextToken[]) => insertsCharacterPositionToken(tokens, position),
+    (tokens: TextToken[]) => transformTokens(tokens),
+    (tokens: TextToken[]) => getModifiedValues(tokens),
+    (texts: string[]) => transformToSingleString(texts),
+    (text: string) => transformNewlinesToBreaklines(text)
   )(section);
 };

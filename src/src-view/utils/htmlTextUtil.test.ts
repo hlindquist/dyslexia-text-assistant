@@ -29,7 +29,7 @@ describe('transformTextToHtml', () => {
     const section: EditorSection = {
       text: 'The quick brown fox',
       lines: 1,
-      ranges: [
+      changes: [
         { word: 'quick', change: 'added' },
         { word: 'fox', change: 'added' },
       ],
@@ -45,7 +45,7 @@ describe('transformTextToHtml', () => {
     const section: EditorSection = {
       text: 'quick quick quick',
       lines: 1,
-      ranges: [
+      changes: [
         { word: 'quick', change: 'added' },
         { word: ' ', change: 'skip' },
         { word: 'quick', change: 'skip' },
@@ -65,7 +65,7 @@ describe('transformTextToHtml', () => {
     const section: EditorSection = {
       text: 'Hello, bah here is text.',
       lines: 2,
-      ranges: [
+      changes: [
         { word: 'Hello', change: 'skip' },
         { word: ',', change: 'skip' },
         { word: ' ', change: 'skip' },
@@ -91,7 +91,7 @@ describe('transformTextToHtml', () => {
     const section: EditorSection = {
       text: 'Hey, hi, you.',
       lines: 1,
-      ranges: [
+      changes: [
         { word: 'Hey', change: 'skip' },
         { word: ',', change: 'skip' },
         { word: ' ', change: 'skip' },

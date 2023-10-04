@@ -47,7 +47,7 @@ describe('createOriginalSection', () => {
 
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
-    expect(result.ranges).toEqual(expectedRanges);
+    expect(result.changes).toEqual(expectedRanges);
   });
 });
 
@@ -72,7 +72,7 @@ describe('createCorrectedSection', () => {
 
     expect(result.text).toEqual(expectedText);
     expect(result.lines).toEqual(expectedLines);
-    expect(result.ranges).toEqual(expectedRanges);
+    expect(result.changes).toEqual(expectedRanges);
   });
 });
 
@@ -86,7 +86,7 @@ describe('createSpellingSections', () => {
     const originalSection = result.original;
 
     expect(originalSection.lines).toBe(1);
-    expect(originalSection.ranges).toEqual([
+    expect(originalSection.changes).toEqual([
       {
         word: 'Angus',
         change: 'skip',
@@ -115,7 +115,7 @@ describe('createSpellingSections', () => {
 
     const correctedSection = result.corrected;
     expect(correctedSection.lines).toBe(1);
-    expect(correctedSection.ranges).toEqual([
+    expect(correctedSection.changes).toEqual([
       {
         word: 'Angus',
         change: 'skip',
