@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { getPositionIgnoringNewlines } from './htmlTextUtil';
+import { getPositionIgnoringNewlines } from './textUtils';
 
 describe('getPositionIgnoringNewlines', () => {
   it('should calculate position correctly for a character within a line', () => {

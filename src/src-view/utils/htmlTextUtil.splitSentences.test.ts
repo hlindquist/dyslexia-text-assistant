@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import { TextToken } from '../../types/types';
-import { splitFullSentences } from './htmlTextUtil';
+import { splitFullSentences } from './textUtils';
 
 describe('splitFullSentences', () => {
   it('should split tokens with periods in the middle of the texts', () => {
