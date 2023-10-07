@@ -3,10 +3,7 @@ import {
   ContentMessage,
   SpellingSection,
 } from '../../types/types';
-import {
-  getPositionIgnoringNewlines,
-  transformTextToHtml,
-} from '../utils/htmlTextUtil';
+import { transformTextToHtml } from '../utils/htmlTextUtil';
 import {
   setCharPosition,
   setCorrectedHtml,
@@ -17,6 +14,7 @@ import ChatGPT from './adapters/ChatGPT';
 import { createSpellingSection } from '../functions/modules/spelling';
 import store from '../redux/store';
 import { debounce } from 'lodash';
+import { getPositionIgnoringNewlines } from '../utils/textUtils';
 
 const channel = new BroadcastChannel('text-assistant');
 

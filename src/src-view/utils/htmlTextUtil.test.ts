@@ -63,19 +63,19 @@ describe('transformTextToHtml', () => {
 
   it('should surround added and removed words with span tags', () => {
     const section: EditorSection = {
-      text: 'Hei, bah her er tekst.',
+      text: 'Hello, bah here is text.',
       lines: 2,
       ranges: [
-        { word: 'Hei', change: 'skip' },
+        { word: 'Hello', change: 'skip' },
         { word: ',', change: 'skip' },
         { word: ' ', change: 'skip' },
         { word: 'bah', change: 'removed' },
         { word: ' ', change: 'skip' },
-        { word: 'her', change: 'skip' },
+        { word: 'here', change: 'skip' },
         { word: ' ', change: 'skip' },
-        { word: 'er', change: 'skip' },
+        { word: 'is', change: 'skip' },
         { word: ' ', change: 'skip' },
-        { word: 'tekst', change: 'added' },
+        { word: 'text', change: 'added' },
         { word: '.', change: 'skip' },
       ],
     };
@@ -83,22 +83,22 @@ describe('transformTextToHtml', () => {
     const result = transformTextToHtml(section, charPosition);
 
     expect(result).toEqual(
-      '<span class="currentPosition"></span>Hei, <span class="removed">bah</span> her er <span class="added">tekst</span>.'
+      '<span class="currentPosition"></span>Hello, <span class="removed">bah</span> here is <span class="added">text</span>.'
     );
   });
 
   it('should surround correct instance of word with span tag when multiple instances', () => {
     const section: EditorSection = {
-      text: 'Hei, på, deg.',
+      text: 'Hey, hi, you.',
       lines: 1,
       ranges: [
-        { word: 'Hei', change: 'skip' },
+        { word: 'Hey', change: 'skip' },
         { word: ',', change: 'skip' },
         { word: ' ', change: 'skip' },
-        { word: 'på', change: 'skip' },
+        { word: 'hi', change: 'skip' },
         { word: ',', change: 'removed' },
         { word: ' ', change: 'skip' },
-        { word: 'deg', change: 'skip' },
+        { word: 'you', change: 'skip' },
         { word: '.', change: 'skip' },
       ],
     };
@@ -106,7 +106,7 @@ describe('transformTextToHtml', () => {
     const result = transformTextToHtml(section, charPosition);
 
     expect(result).toEqual(
-      '<span class="currentPosition"></span>Hei, på<span class="removed">,</span> deg.'
+      '<span class="currentPosition"></span>Hey, hi<span class="removed">,</span> you.'
     );
   });
 });

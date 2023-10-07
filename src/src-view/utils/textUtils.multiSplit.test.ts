@@ -16,25 +16,25 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { multiSplit } from './htmlTextUtil';
+import { multiSplit } from './textUtils';
 
 describe('multiSplit', () => {
   it('should split a string based on multiple tokens', () => {
     const inputString =
-      'Hei, her er lit tekst å rete, Hei, her er lit tekst å rete.';
-    const tokensToSplitOn = ['lit', 'rete'];
+      'Hey, here is some text to split, Hey, here is some text to split.';
+    const tokensToSplitOn = ['some', 'split'];
 
     const result = multiSplit(inputString, tokensToSplitOn);
 
     expect(result).toEqual([
-      'Hei, her er ',
-      'lit',
-      ' tekst å ',
-      'rete',
-      ', Hei, her er ',
-      'lit',
-      ' tekst å ',
-      'rete',
+      'Hey, here is ',
+      'some',
+      ' text to ',
+      'split',
+      ', Hey, here is ',
+      'some',
+      ' text to ',
+      'split',
       '.',
     ]);
   });
