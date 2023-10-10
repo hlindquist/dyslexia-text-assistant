@@ -83,18 +83,90 @@ export const insertsCharacterPositionElement = (
   return modifiedTokens;
 };
 
+export const transformTextsToTextTokens = (texts: string[]): TextToken[] =>
+  texts.map((text) => ({ original: text }));
+
+export const identifyChangeTypesInText = (
+  wordChanges: WordChange[],
+  splitText: TextToken[]
+): TextToken[] => {
+  let index = 0;
+
+  const resultArray: TextToken[] = splitText.map((textToken: TextToken) => {
+    if (
+      index < wordChanges.length &&
+      textToken.original === wordChanges[index].word
+    ) {
+      const changeType = wordChanges[index].change;
+      index++;
+      return { original: textToken.original, type: changeType };
+    }
+    return { original: textToken.original };
+  });
+
+  return resultArray;
+};
+
+const transformCurrentToken = (token: TextToken) =>
+  token.type === 'current'
+    ? { ...token, modified: '<span class="currentPosition"></span>' }
+    : token;
+
+const transformAddedOrRemovedTokens = (token: TextToken) =>
+  ['added', 'removed'].includes(token?.type || '')
+    ? {
+        ...token,
+        modified: `<span class="${token.type}">${token.original}</span>`,
+      }
+    : token;
+
+const transformSkippedToken = (token: TextToken) =>
+  token.type === 'skip' ? { ...token, modified: token.original } : token;
+
+export const transformTokens = (tokens: TextToken[]): TextToken[] =>
+  tokens
+    .map(transformCurrentToken)
+    .map(transformAddedOrRemovedTokens)
+    .map(transformSkippedToken);
+
+export const insertsCharacterPositionToken = (
+  tokens: TextToken[],
+  position: number
+): TextToken[] => {
+  const modifiedTokens = [...tokens];
+
+  const insertIndex = modifiedTokens.findIndex(
+    (token) => (position -= token.original?.length) <= 0
+  );
+
+  modifiedTokens.splice(insertIndex, 0, {
+    original: '',
+    modified: '',
+    type: 'current',
+  });
+
+  return modifiedTokens;
+};
+
+const getModifiedValue = (tokens: TextToken[]) =>
+  tokens.map(R.prop('modified'));
+
 export const transformTextToHtml = (
   section: EditorSection,
   charPosition: CharPosition
 ) => {
   const position = getPositionIgnoringNewlines(charPosition, section.text);
+  const changes = section.ranges;
+
   return R.pipe(
-    splitText,
-    (texts: string[]) => surroundWordsWithSpan(section.ranges, texts),
+    (section: EditorSection) => splitText(section),
+    (texts: string[]) => transformTextsToTextTokens(texts),
+    (texts: TextToken[]) => identifyChangeTypesInText(changes, texts),
+    (tokens: TextToken[]) => insertsCharacterPositionToken(tokens, position),
     (tokens: TextToken[]) => splitFullSentences(tokens),
-    (tokens: TextToken[]) => insertsCharacterPositionElement(tokens, position),
-    (tokens: TextToken[]) => tokens.map(R.prop('modified')),
+    (tokens: TextToken[]) => transformTokens(tokens),
+    (tokens: TextToken[]) => getModifiedValue(tokens),
     (texts: string[]) => texts.join(''),
-    transformNewlinesToBreaklines
+    (text: string) => transformNewlinesToBreaklines(text)
   )(section);
 };

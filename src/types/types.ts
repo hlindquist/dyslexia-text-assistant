@@ -24,7 +24,8 @@ export interface WordChange {
 
 export interface TextToken {
   original: string;
-  modified: string;
+  modified?: string;
+  type?: ChangeType | 'current';
 }
 
 export interface CharPosition {
