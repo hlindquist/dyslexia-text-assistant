@@ -80,6 +80,8 @@ export interface TextAssistantState {
   text: string | undefined;
   charPosition: CharPosition | undefined;
   spellingSection: SpellingSection | undefined;
+  originalTokens: TextToken[] | undefined;
+  correctedTokens: TextToken[] | undefined;
   originalHtml: string | undefined;
   correctedHtml: string | undefined;
 }
