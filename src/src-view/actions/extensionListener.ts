@@ -3,7 +3,10 @@ import {
   ContentMessage,
   SpellingSection,
 } from '../../types/types';
-import { transformTextToHtml } from '../utils/htmlTextUtil';
+import {
+  transformTextToHtml,
+  transformTokensToHtml,
+} from '../utils/htmlTextUtil';
 import {
   setCharPosition,
   setCorrectedHtml,
@@ -15,6 +18,7 @@ import { createSpellingSection } from '../functions/modules/spelling';
 import store from '../redux/store';
 import { debounce } from 'lodash';
 import { getPositionIgnoringNewlines } from '../utils/textUtils';
+import { transformTextToTokens } from '../functions/tokenUtils';
 
 const channel = new BroadcastChannel('text-assistant');
 
@@ -48,14 +52,16 @@ const handleContentMessage = async (contentMessage: ContentMessage) => {
   );
 
   if (spellingSection) {
-    const originalHtml = transformTextToHtml(
+    const originalTokens = transformTextToTokens(
       spellingSection.original,
       contentMessage.charPosition
     );
-    const correctedHtml = transformTextToHtml(
+    const correctedTokens = transformTextToTokens(
       spellingSection.corrected,
       contentMessage.charPosition
     );
+    const originalHtml = transformTokensToHtml(originalTokens);
+    const correctedHtml = transformTokensToHtml(correctedTokens);
 
     const newState = {
       ...state,

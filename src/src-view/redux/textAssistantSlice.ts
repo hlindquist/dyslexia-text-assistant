@@ -7,6 +7,8 @@ const initialState: TextAssistantState = {
   text: undefined,
   charPosition: undefined,
   spellingSection: undefined,
+  originalTokens: undefined,
+  correctedTokens: undefined,
   originalHtml: undefined,
   correctedHtml: undefined,
 };

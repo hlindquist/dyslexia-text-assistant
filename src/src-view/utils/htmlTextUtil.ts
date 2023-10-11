@@ -151,6 +151,15 @@ export const insertsCharacterPositionToken = (
 const getModifiedValue = (tokens: TextToken[]) =>
   tokens.map(R.prop('modified'));
 
+export const transformTokensToHtml = (textTokens: TextToken[]) =>
+  R.pipe(
+    (tokens: TextToken[]) => splitFullSentences(tokens),
+    (tokens: TextToken[]) => transformTokens(tokens),
+    (tokens: TextToken[]) => getModifiedValue(tokens),
+    (texts: string[]) => texts.join(''),
+    (text: string) => transformNewlinesToBreaklines(text)
+  )(textTokens);
+
 export const transformTextToHtml = (
   section: EditorSection,
   charPosition: CharPosition
