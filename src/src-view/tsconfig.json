@@ -20,7 +20,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "target": "es6",
-    "outDir": "../local-dist",
+    "outDir": "../../local-dist",
     "lib": ["es6", "dom"],
     "jsx": "react",
     "rootDir": "../",

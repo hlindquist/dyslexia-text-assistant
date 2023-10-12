@@ -3,10 +3,7 @@ import {
   ContentMessage,
   SpellingSection,
 } from '../../types/types';
-import {
-  transformTextToHtml,
-  transformTokensToHtml,
-} from '../utils/htmlTextUtil';
+import { transformTokensToHtml } from '../utils/htmlTextUtil';
 import {
   setCharPosition,
   setCorrectedHtml,
@@ -17,14 +14,18 @@ import ChatGPT from './adapters/ChatGPT';
 import { createSpellingSection } from '../functions/modules/spelling';
 import store from '../redux/store';
 import { debounce } from 'lodash';
-import { getPositionIgnoringNewlines } from '../utils/textUtils';
+import {
+  getPositionIgnoringNewlines,
+  trimToCompleteSentences,
+} from '../utils/textUtils';
 import { transformTextToTokens } from '../functions/tokenUtils';
+import { ilog } from '../../utils/debugUtils';
 
 const channel = new BroadcastChannel('text-assistant');
 
 const callChat = async (
   contentMessage: ContentMessage
-): Promise<SpellingSection> | undefined => {
+): Promise<SpellingSection | undefined> => {
   let spellingSection = undefined;
   if (
     contentMessage?.text?.length > 0 &&
@@ -47,30 +48,37 @@ const callChat = async (
 const handleContentMessage = async (contentMessage: ContentMessage) => {
   const state = store.getState().textAssistant;
 
-  const spellingSection = await callChat(contentMessage).then(
+  const completedContentMessage = {
+    ...contentMessage,
+    text: trimToCompleteSentences(contentMessage.text),
+  };
+
+  ilog(completedContentMessage, 'completedContentMessage');
+
+  const spellingSection = await callChat(completedContentMessage).then(
     (spellingSection) => spellingSection
   );
 
   if (spellingSection) {
     const originalTokens = transformTextToTokens(
       spellingSection.original,
-      contentMessage.charPosition
+      completedContentMessage.charPosition
     );
     const correctedTokens = transformTextToTokens(
       spellingSection.corrected,
-      contentMessage.charPosition
+      completedContentMessage.charPosition
     );
     const originalHtml = transformTokensToHtml(originalTokens);
     const correctedHtml = transformTokensToHtml(correctedTokens);
 
     const newState = {
       ...state,
-      openAiApiKey: contentMessage.apiKey,
-      language: contentMessage.language,
-      text: contentMessage.text,
+      openAiApiKey: completedContentMessage.apiKey,
+      language: completedContentMessage.language,
+      text: completedContentMessage.text,
       charPosition: getPositionIgnoringNewlines(
-        contentMessage.charPosition,
-        contentMessage.text
+        completedContentMessage.charPosition,
+        completedContentMessage.text
       ),
       spellingSection,
       originalHtml,
@@ -87,14 +95,8 @@ const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
   const spellingSection = state.spellingSection;
   if (spellingSection) {
-    const originalHtml = transformTextToHtml(
-      spellingSection.original,
-      charPosition
-    );
-    const correctedHtml = transformTextToHtml(
-      spellingSection.corrected,
-      charPosition
-    );
+    const originalHtml = transformTokensToHtml(state.originalTokens || []);
+    const correctedHtml = transformTokensToHtml(state.correctedTokens || []);
 
     store.dispatch(setOriginalHtml(originalHtml));
     store.dispatch(setCorrectedHtml(correctedHtml));

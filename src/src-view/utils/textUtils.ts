@@ -1,4 +1,4 @@
-import { escapeRegExp } from 'lodash';
+import { escapeRegExp, findLastIndex } from 'lodash';
 import {
   CharPosition,
   EditorSection,
@@ -73,4 +73,12 @@ export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
   });
 
   return resultArray;
+};
+
+export const trimToCompleteSentences = (text: string): string => {
+  const charList = text.split('');
+  const lastStopCharacter = findLastIndex(charList, (char: string) =>
+    ['.', '!', '?'].includes(char)
+  );
+  return charList.slice(0, lastStopCharacter + 1).join('');
 };
