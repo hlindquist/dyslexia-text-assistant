@@ -20,8 +20,6 @@ import { debounce } from 'lodash';
 import { getPositionIgnoringNewlines } from '../utils/textUtils';
 import { transformTextToTokens } from '../functions/tokenUtils';
 
-const channel = new BroadcastChannel('text-assistant');
-
 const callChat = async (
   contentMessage: ContentMessage
 ): Promise<SpellingSection> | undefined => {
@@ -105,23 +103,21 @@ const handleCharPosition = (charPosition: CharPosition) => {
 
 const debouncedHandleCharPosition = debounce(handleCharPosition, 200);
 
-const handleEvent = (event: MessageEvent) => {
-  const contentMessage: ContentMessage | undefined =
-    event?.data?.contentMessage;
-  if (contentMessage) {
+const handleEvent = (contentMessage: any) => {
+  if ((contentMessage as ContentMessage)?.text) {
     debouncedHandleContentMessage(contentMessage);
   }
 
-  const charPosition: CharPosition | undefined = event?.data?.charPosition;
+  const charPosition: CharPosition | undefined = contentMessage.charPosition;
   if (charPosition) {
     debouncedHandleCharPosition(charPosition);
   }
 };
 
 window.addEventListener('message', (event) => {
-  handleEvent(event);
+  handleEvent(event?.data);
 });
 
-channel.addEventListener('message', (event) => {
-  handleEvent(event);
-});
+export const sendMessage = (message: any) => {
+  handleEvent(message);
+};
