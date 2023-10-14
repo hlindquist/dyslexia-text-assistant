@@ -17,7 +17,6 @@
 
 import { TextToken, WordChange } from '../../types/types';
 import * as R from 'ramda';
-import { splitFullSentences } from './textUtils';
 
 /* eslint-disable indent */
 export const transformNewlinesToBreaklines = (text: string) =>
@@ -112,7 +111,7 @@ const transformAddedOrRemovedTokens = (token: TextToken) =>
     : token;
 
 const transformSkippedToken = (token: TextToken) =>
-  token.type === 'skip' ? { ...token, modified: token.original } : token;
+  token.type === 'skipped' ? { ...token, modified: token.original } : token;
 
 export const transformTokens = (tokens: TextToken[]): TextToken[] =>
   tokens
@@ -125,7 +124,6 @@ const getModifiedValue = (tokens: TextToken[]) =>
 
 export const transformTokensToHtml = (textTokens: TextToken[]) =>
   R.pipe(
-    (tokens: TextToken[]) => splitFullSentences(tokens),
     (tokens: TextToken[]) => transformTokens(tokens),
     (tokens: TextToken[]) => getModifiedValue(tokens),
     (texts: string[]) => texts.join(''),

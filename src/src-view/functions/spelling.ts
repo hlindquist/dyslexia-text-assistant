@@ -16,48 +16,27 @@
  */
 
 import {
+  DiffChanges,
   EditorSection,
   SpellingSection,
   WordChange,
-} from '../../../types/types';
-import { compareWords } from '../compareUtil';
+} from '../../types/types';
 
 export const createSpellingSection = (
   content: string,
-  response: string
+  response: string,
+  diffChanges: DiffChanges
 ): SpellingSection => {
-  const wordChanges = compareWords(content, response);
-
   return {
-    original: createOriginalSection(content, wordChanges),
-    corrected: createCorrectedSection(response, wordChanges),
+    original: createSection(content, diffChanges.original),
+    corrected: createSection(response, diffChanges.corrected),
   };
 };
 
-export const createOriginalSection = (
+export const createSection = (
   content: string,
   wordChanges: WordChange[]
-) => {
-  const originalSection = {
-    text: content,
-    lines: content.split('\n')?.length,
-    ranges: wordChanges.filter((change) =>
-      ['removed', 'skip'].includes(change.change)
-    ),
-  } as EditorSection;
-  return originalSection;
-};
-
-export const createCorrectedSection = (
-  response: string,
-  wordChanges: WordChange[]
-) => {
-  const correctedSection = {
-    text: response,
-    lines: response.split('\n')?.length,
-    ranges: wordChanges.filter((change) =>
-      ['added', 'skip'].includes(change.change)
-    ),
-  } as EditorSection;
-  return correctedSection;
-};
+): EditorSection => ({
+  text: content,
+  ranges: wordChanges,
+});

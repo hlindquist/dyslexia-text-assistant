@@ -6,11 +6,9 @@ const initialState: TextAssistantState = {
   language: undefined,
   text: undefined,
   charPosition: undefined,
-  spellingSection: undefined,
   originalTokens: undefined,
   correctedTokens: undefined,
-  originalHtml: undefined,
-  correctedHtml: undefined,
+  debug: [],
 };
 
 const textAssistantSlice = createSlice({
@@ -40,11 +38,22 @@ const textAssistantSlice = createSlice({
         charPosition: action.payload,
       };
     },
+    addToHistory: (state, action) => {
+      return {
+        ...state,
+        debug: state.debug.concat([action.payload]).slice(0, 20),
+      };
+    },
   },
 });
 
-export const { setState, setCharPosition, setOriginalHtml, setCorrectedHtml } =
-  textAssistantSlice.actions;
+export const {
+  setState,
+  setCharPosition,
+  setOriginalHtml,
+  setCorrectedHtml,
+  addToHistory,
+} = textAssistantSlice.actions;
 
 export const selectOpenAiApiKey = (state: {
   textAssistant: TextAssistantState;
@@ -56,15 +65,12 @@ export const selectText = (state: { textAssistant: TextAssistantState }) =>
 export const selectCharPosition = (state: {
   textAssistant: TextAssistantState;
 }) => state.textAssistant.charPosition;
-export const selectSpellingSection = (state: {
+export const selectOriginalTokens = (state: {
   textAssistant: TextAssistantState;
-}) => state.textAssistant.spellingSection;
-export const selectOriginalHtml = (state: {
+}) => state.textAssistant.originalTokens;
+export const selectCorrectedTokens = (state: {
   textAssistant: TextAssistantState;
-}) => state.textAssistant.originalHtml;
-export const selectCorrectedHtml = (state: {
-  textAssistant: TextAssistantState;
-}) => state.textAssistant.correctedHtml;
+}) => state.textAssistant.correctedTokens;
 
 const textAssistantReducer = textAssistantSlice.reducer;
 

@@ -17,16 +17,12 @@
 
 import * as R from 'ramda';
 
-import { CharPosition, EditorSection, TextToken } from '../../types/types';
+import { EditorSection, TextToken } from '../../types/types';
 import {
   identifyChangeTypesInText,
   transformTextsToTextTokens,
 } from '../utils/htmlTextUtil';
-import {
-  getPositionIgnoringNewlines,
-  splitFullSentences,
-  splitText,
-} from '../utils/textUtils';
+import { splitFullSentences, splitText } from '../utils/textUtils';
 
 export const insertsCharacterPositionToken = (
   tokens: TextToken[],
@@ -50,18 +46,13 @@ export const insertsCharacterPositionToken = (
 export const deleteCurrentPosition = (textTokens: TextToken[]): TextToken[] =>
   textTokens.filter((token) => token.type !== 'current');
 
-export const transformTextToTokens = (
-  section: EditorSection,
-  charPosition: CharPosition
-) => {
-  const position = getPositionIgnoringNewlines(charPosition, section.text);
+export const transformTextToTokens = (section: EditorSection) => {
   const changes = section.ranges;
 
   return R.pipe(
     (section: EditorSection) => splitText(section),
     (texts: string[]) => transformTextsToTextTokens(texts),
     (texts: TextToken[]) => identifyChangeTypesInText(changes, texts),
-    (tokens: TextToken[]) => insertsCharacterPositionToken(tokens, position),
     (tokens: TextToken[]) => splitFullSentences(tokens)
   )(section);
 };
