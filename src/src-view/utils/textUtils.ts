@@ -6,6 +6,41 @@ import {
   WordChange,
 } from '../../types/types';
 
+import { findLastIndex } from 'lodash';
+
+export const splitStringWithStopwords = (inputString: string) => {
+  const result = [];
+  let currentWord = '';
+
+  for (let i = 0; i < inputString?.length; i++) {
+    const char = inputString[i];
+
+    if (/[.,!? ]/.test(char)) {
+      if (currentWord) {
+        result.push(currentWord);
+        currentWord = '';
+      }
+      result.push(char);
+    } else {
+      currentWord += char;
+    }
+  }
+
+  if (currentWord) {
+    result.push(currentWord);
+  }
+
+  return result;
+};
+
+export const trimToCompleteSentences = (text: string): string => {
+  const charList = text.split('');
+  const lastStopCharacter = findLastIndex(charList, (char: string) =>
+    ['.', '!', '?'].includes(char)
+  );
+  return charList.slice(0, lastStopCharacter + 1).join('');
+};
+
 export function multiSplit(
   inputString: string,
   tokensToSplitOn: string[]
