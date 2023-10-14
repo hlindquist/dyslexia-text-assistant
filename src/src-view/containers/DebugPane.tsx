@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
 import './DebugPane.css';
-import { ilog } from '../../utils/debugUtils';
 import { sendMessage } from '../actions/extensionListener';
+
+declare const OPENAI_TEST_KEY: string;
 
 const DebugPane = () => {
   const [text, setText] = useState('');
@@ -24,9 +25,9 @@ const DebugPane = () => {
 
     // Send the text value along with charPosition through the Broadcast Channel
     sendMessage({
-      text: ilog(newText, 'newText'),
+      text: newText,
       language: 'norwegian',
-      apiKey: '',
+      apiKey: OPENAI_TEST_KEY,
       charPosition: { ...charPosition },
     });
     setText(newText);

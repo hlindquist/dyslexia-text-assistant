@@ -16,45 +16,36 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { transformTextToHtml } from './htmlTextUtil';
-import { CharPosition, EditorSection } from '../../types/types';
+import { transformTokensToHtml } from './htmlTextUtil'; // Import the new function
+import { TextToken } from '../../types/types';
 
-const charPosition: CharPosition = {
-  line: 0,
-  character: 0,
-};
-
-describe('transformTextToHtml', () => {
+describe('transformTokensToHtml', () => {
   it('should surround added words with span tags', () => {
-    const section: EditorSection = {
-      text: 'The quick brown fox',
-      lines: 1,
-      ranges: [
-        { word: 'quick', change: 'added' },
-        { word: 'fox', change: 'added' },
-      ],
-    };
+    const tokens: TextToken[] = [
+      { original: '', type: 'current' },
+      { original: 'The', type: 'skip' },
+      { original: 'quick', type: 'added' },
+      { original: 'brown', type: 'skip' },
+      { original: 'fox', type: 'added' },
+    ];
 
-    const result = transformTextToHtml(section, charPosition);
+    const result = transformTokensToHtml(tokens);
 
     expect(result).toContain('<span class="added">quick</span>');
     expect(result).toContain('<span class="added">fox</span>');
   });
 
   it('should handle multiple occurrences of the same word', () => {
-    const section: EditorSection = {
-      text: 'quick quick quick',
-      lines: 1,
-      ranges: [
-        { word: 'quick', change: 'added' },
-        { word: ' ', change: 'skip' },
-        { word: 'quick', change: 'skip' },
-        { word: ' ', change: 'skip' },
-        { word: 'quick', change: 'added' },
-      ],
-    };
+    const tokens: TextToken[] = [
+      { original: '', type: 'current' },
+      { original: 'quick', type: 'added' },
+      { original: ' ', type: 'skip' },
+      { original: 'quick', type: 'skip' },
+      { original: ' ', type: 'skip' },
+      { original: 'quick', type: 'added' },
+    ];
 
-    const result = transformTextToHtml(section, charPosition);
+    const result = transformTokensToHtml(tokens);
 
     expect(result).toEqual(
       '<span class="currentPosition"></span><span class="added">quick</span> quick <span class="added">quick</span>'
@@ -62,25 +53,22 @@ describe('transformTextToHtml', () => {
   });
 
   it('should surround added and removed words with span tags', () => {
-    const section: EditorSection = {
-      text: 'Hello, bah here is text.',
-      lines: 2,
-      ranges: [
-        { word: 'Hello', change: 'skip' },
-        { word: ',', change: 'skip' },
-        { word: ' ', change: 'skip' },
-        { word: 'bah', change: 'removed' },
-        { word: ' ', change: 'skip' },
-        { word: 'here', change: 'skip' },
-        { word: ' ', change: 'skip' },
-        { word: 'is', change: 'skip' },
-        { word: ' ', change: 'skip' },
-        { word: 'text', change: 'added' },
-        { word: '.', change: 'skip' },
-      ],
-    };
+    const tokens: TextToken[] = [
+      { original: '', type: 'current' },
+      { original: 'Hello', type: 'skip' },
+      { original: ',', type: 'skip' },
+      { original: ' ', type: 'skip' },
+      { original: 'bah', type: 'removed' },
+      { original: ' ', type: 'skip' },
+      { original: 'here', type: 'skip' },
+      { original: ' ', type: 'skip' },
+      { original: 'is', type: 'skip' },
+      { original: ' ', type: 'skip' },
+      { original: 'text', type: 'added' },
+      { original: '.', type: 'skip' },
+    ];
 
-    const result = transformTextToHtml(section, charPosition);
+    const result = transformTokensToHtml(tokens);
 
     expect(result).toEqual(
       '<span class="currentPosition"></span>Hello, <span class="removed">bah</span> here is <span class="added">text</span>.'
@@ -88,22 +76,19 @@ describe('transformTextToHtml', () => {
   });
 
   it('should surround correct instance of word with span tag when multiple instances', () => {
-    const section: EditorSection = {
-      text: 'Hey, hi, you.',
-      lines: 1,
-      ranges: [
-        { word: 'Hey', change: 'skip' },
-        { word: ',', change: 'skip' },
-        { word: ' ', change: 'skip' },
-        { word: 'hi', change: 'skip' },
-        { word: ',', change: 'removed' },
-        { word: ' ', change: 'skip' },
-        { word: 'you', change: 'skip' },
-        { word: '.', change: 'skip' },
-      ],
-    };
+    const tokens: TextToken[] = [
+      { original: '', type: 'current' },
+      { original: 'Hey', type: 'skip' },
+      { original: ',', type: 'skip' },
+      { original: ' ', type: 'skip' },
+      { original: 'hi', type: 'skip' },
+      { original: ',', type: 'removed' },
+      { original: ' ', type: 'skip' },
+      { original: 'you', type: 'skip' },
+      { original: '.', type: 'skip' },
+    ];
 
-    const result = transformTextToHtml(section, charPosition);
+    const result = transformTokensToHtml(tokens);
 
     expect(result).toEqual(
       '<span class="currentPosition"></span>Hey, hi<span class="removed">,</span> you.'

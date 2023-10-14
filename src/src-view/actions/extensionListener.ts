@@ -1,12 +1,12 @@
+import * as R from 'ramda';
+
 import {
   CharPosition,
   ContentMessage,
   SpellingSection,
+  TextToken,
 } from '../../types/types';
-import {
-  transformTextToHtml,
-  transformTokensToHtml,
-} from '../utils/htmlTextUtil';
+import { transformTokensToHtml } from '../utils/htmlTextUtil';
 import {
   setCharPosition,
   setCorrectedHtml,
@@ -17,24 +17,40 @@ import ChatGPT from './adapters/ChatGPT';
 import { createSpellingSection } from '../functions/modules/spelling';
 import store from '../redux/store';
 import { debounce } from 'lodash';
-import { getPositionIgnoringNewlines } from '../utils/textUtils';
-import { transformTextToTokens } from '../functions/tokenUtils';
+import {
+  getPositionIgnoringNewlines,
+  trimToCompleteSentences,
+} from '../utils/textUtils';
+import {
+  deleteCurrentPosition,
+  insertsCharacterPositionToken,
+  transformTextToTokens,
+} from '../functions/tokenUtils';
 
 const callChat = async (
   contentMessage: ContentMessage
 ): Promise<SpellingSection> | undefined => {
   let spellingSection = undefined;
+
+  const completedContentMessage = {
+    ...contentMessage,
+    text: trimToCompleteSentences(contentMessage.text),
+  };
+
   if (
-    contentMessage?.text?.length > 0 &&
-    contentMessage?.apiKey &&
-    contentMessage?.language
+    completedContentMessage?.text?.length > 0 &&
+    completedContentMessage?.apiKey &&
+    completedContentMessage?.language
   ) {
-    const chat = new ChatGPT(contentMessage.apiKey, contentMessage.language);
+    const chat = new ChatGPT(
+      completedContentMessage.apiKey,
+      completedContentMessage.language
+    );
     spellingSection = await chat
-      .spellcheck(contentMessage.text)
+      .spellcheck(completedContentMessage.text)
       .then((response) =>
         response
-          ? createSpellingSection(contentMessage.text, response)
+          ? createSpellingSection(completedContentMessage.text, response)
           : undefined
       );
   }
@@ -73,6 +89,8 @@ const handleContentMessage = async (contentMessage: ContentMessage) => {
       spellingSection,
       originalHtml,
       correctedHtml,
+      originalTokens,
+      correctedTokens,
     };
 
     store.dispatch(setState(newState));
@@ -81,17 +99,42 @@ const handleContentMessage = async (contentMessage: ContentMessage) => {
 
 const debouncedHandleContentMessage = debounce(handleContentMessage, 500);
 
+const endsWithStopWord = (inputString): boolean => {
+  const stopWords = ['.', '?', '!'];
+
+  for (const stopWord of stopWords) {
+    if (inputString.endsWith(stopWord)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+const replaceCurrentPositionToken = (
+  tokens: TextToken[],
+  charPosition: number
+) =>
+  R.pipe(
+    (tokens: TextToken[]) => deleteCurrentPosition(tokens),
+    (tokens: TextToken[]) => insertsCharacterPositionToken(tokens, charPosition)
+  )(tokens);
+
 const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
   const spellingSection = state.spellingSection;
-  if (spellingSection) {
-    const originalHtml = transformTextToHtml(
-      spellingSection.original,
-      charPosition
+  const positionNumber = getPositionIgnoringNewlines(
+    charPosition,
+    spellingSection?.original?.text || ''
+  );
+  if (state.originalTokens && state.correctedTokens) {
+    const modifiedOriginalTokens = replaceCurrentPositionToken(
+      state.originalTokens,
+      positionNumber
     );
-    const correctedHtml = transformTextToHtml(
-      spellingSection.corrected,
-      charPosition
+    const originalHtml = transformTokensToHtml(modifiedOriginalTokens);
+    const correctedHtml = transformTokensToHtml(
+      replaceCurrentPositionToken(state.correctedTokens, positionNumber)
     );
 
     store.dispatch(setOriginalHtml(originalHtml));
@@ -103,19 +146,18 @@ const handleCharPosition = (charPosition: CharPosition) => {
 
 const debouncedHandleCharPosition = debounce(handleCharPosition, 200);
 
-const handleEvent = (contentMessage: any) => {
-  if ((contentMessage as ContentMessage)?.text) {
-    debouncedHandleContentMessage(contentMessage);
-  }
-
-  const charPosition: CharPosition | undefined = contentMessage.charPosition;
-  if (charPosition) {
-    debouncedHandleCharPosition(charPosition);
+const handleEvent = (message: any) => {
+  if ((message as ContentMessage)?.text) {
+    endsWithStopWord(message.text)
+      ? handleContentMessage(message)
+      : debouncedHandleContentMessage(message);
+  } else if (message?.character) {
+    debouncedHandleCharPosition(message);
   }
 };
 
 window.addEventListener('message', (event) => {
-  handleEvent(event?.data);
+  handleEvent(event?.data?.contentMessage || event?.data.charPosition);
 });
 
 export const sendMessage = (message: any) => {

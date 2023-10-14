@@ -20,7 +20,6 @@ import * as R from 'ramda';
 import { CharPosition, EditorSection, TextToken } from '../../types/types';
 import {
   identifyChangeTypesInText,
-  insertsCharacterPositionToken,
   transformTextsToTextTokens,
 } from '../utils/htmlTextUtil';
 import {
@@ -28,6 +27,28 @@ import {
   splitFullSentences,
   splitText,
 } from '../utils/textUtils';
+
+export const insertsCharacterPositionToken = (
+  tokens: TextToken[],
+  position: number
+): TextToken[] => {
+  const modifiedTokens = [...tokens];
+
+  const insertIndex = modifiedTokens.findIndex(
+    (token) => (position -= token.original?.length) <= 0
+  );
+
+  modifiedTokens.splice(insertIndex, 0, {
+    original: '',
+    modified: '',
+    type: 'current',
+  });
+
+  return modifiedTokens;
+};
+
+export const deleteCurrentPosition = (textTokens: TextToken[]): TextToken[] =>
+  textTokens.filter((token) => token.type !== 'current');
 
 export const transformTextToTokens = (
   section: EditorSection,

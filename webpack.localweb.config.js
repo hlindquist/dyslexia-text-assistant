@@ -1,6 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const viewLocalConfig = {
   target: 'web',
@@ -59,6 +60,9 @@ const viewLocalConfig = {
     new HtmlWebpackPlugin({
       template: './src/src-view/index.html',
       filename: 'index.html',
+    }),
+    new DefinePlugin({
+      OPENAI_TEST_KEY: JSON.stringify(process.env.OPENAI_API_KEY),
     }),
   ],
 

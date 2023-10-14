@@ -78,7 +78,7 @@ export interface TextAssistantState {
   openAiApiKey: string | undefined;
   language: string | undefined;
   text: string | undefined;
-  charPosition: CharPosition | undefined;
+  charPosition: number | undefined;
   spellingSection: SpellingSection | undefined;
   originalTokens: TextToken[] | undefined;
   correctedTokens: TextToken[] | undefined;
