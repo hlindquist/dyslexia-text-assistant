@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
 import './DebugPane.css';
-import { sendMessage } from '../actions/extensionListener';
+import { debugContentMessage } from '../actions/extensionListener';
 
 declare const OPENAI_TEST_KEY: string;
 
@@ -12,19 +12,15 @@ const DebugPane = () => {
   const handleChange = (event) => {
     const newText = event.target.value;
 
-    // Calculate character positions based on selection (line and character)
     const selectionStart = event.target.selectionStart;
 
-    // Determine the line and character position based on selectionStart
     const lines = newText.substr(0, selectionStart).split('\n');
     const line = lines.length - 1;
     const character = lines[line].length;
 
-    // Update the charPosition state
     setCharPosition({ line, character });
 
-    // Send the text value along with charPosition through the Broadcast Channel
-    sendMessage({
+    debugContentMessage({
       text: newText,
       language: 'norwegian',
       apiKey: OPENAI_TEST_KEY,

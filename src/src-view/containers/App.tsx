@@ -3,31 +3,45 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  selectCorrectedHtml,
-  selectOriginalHtml,
+  selectCharPosition,
+  selectCorrectedTokens,
+  selectOriginalTokens,
 } from '../redux/textAssistantSlice';
 import { scrollToTarget } from '../utils/browserTools';
+import { transformTokensToHtml } from '../utils/htmlTextUtil';
+import { insertsCharacterPositionToken } from '../functions/tokenUtils';
 
 const App: React.FC = () => {
-  const originalHtml = useSelector(selectOriginalHtml);
-  const correctedHtml = useSelector(selectCorrectedHtml);
+  const originalTokens = useSelector(selectOriginalTokens);
+  const correctedTokens = useSelector(selectCorrectedTokens);
+  const charPosition = useSelector(selectCharPosition);
 
-  const handleResize = () => {
+  const scrollToCurrentPosition = () => {
     scrollToTarget('.original', '.currentPosition');
     scrollToTarget('.corrected', '.currentPosition');
   };
 
   useEffect(() => {
-    handleResize();
-  }, [originalHtml, correctedHtml]);
+    scrollToCurrentPosition();
+  }, [originalTokens, correctedTokens, charPosition]);
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', scrollToCurrentPosition);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', scrollToCurrentPosition);
     };
   }, []);
+
+  if (!originalTokens || !correctedTokens) {
+    return <></>;
+  }
+  const originalHtml = transformTokensToHtml(
+    insertsCharacterPositionToken(originalTokens, charPosition || 0)
+  );
+  const correctedHtml = transformTokensToHtml(
+    insertsCharacterPositionToken(correctedTokens, charPosition || 0)
+  );
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();

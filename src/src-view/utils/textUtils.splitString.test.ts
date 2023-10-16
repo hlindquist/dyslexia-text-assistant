@@ -21,7 +21,7 @@ import { splitStringWithStopwords } from './textUtils';
 describe('splitStringWithSpecialChars', () => {
   it('should split the input string into an array with special characters preserved', () => {
     const inputString = '.hei!halo,,';
-    const expectedOutput = ['.', 'hei', '!', 'halo', ',', ','];
+    const expectedOutput = ['.', 'hei', '!', 'halo,,'];
 
     const result = splitStringWithStopwords(inputString);
 

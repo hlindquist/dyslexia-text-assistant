@@ -18,7 +18,23 @@
 import * as vscode from 'vscode';
 import { isEqual } from 'lodash';
 import AssistantView from './extension/AssistantView';
-import { CharPosition } from './types/types';
+import { CharPosition, Language } from './types/types';
+import check from 'check-types';
+
+const getConfiguredLanguage = (
+  configuration: vscode.WorkspaceConfiguration
+) => {
+  const language = (configuration.get<string>(
+    'dyslexiaTextAssistant.language'
+  ) || '') as Language;
+
+  check.assert.in(language, ['norwegian', 'english', '']);
+  return language;
+};
+
+const getConfiguredApiKey = (configuration: vscode.WorkspaceConfiguration) => {
+  return configuration.get<string>('dyslexiaTextAssistant.openAiApiKey') || '';
+};
 
 export function activate(context: vscode.ExtensionContext) {
   let assistantView: AssistantView | undefined = undefined;
@@ -31,10 +47,8 @@ export function activate(context: vscode.ExtensionContext) {
       const text = activeEditor?.document.getText();
       if (text !== lastChange) {
         const configuration = vscode.workspace.getConfiguration();
-        const apiKey =
-          configuration.get<string>('dyslexiaTextAssistant.openAiApiKey') || '';
-        const language =
-          configuration.get<string>('dyslexiaTextAssistant.language') || '';
+        const apiKey = getConfiguredApiKey(configuration);
+        const language = getConfiguredLanguage(configuration);
         const charPosition = activeEditor?.selection.active as CharPosition;
         lastChange = text;
 

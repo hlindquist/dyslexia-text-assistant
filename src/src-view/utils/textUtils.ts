@@ -15,7 +15,7 @@ export const splitStringWithStopwords = (inputString: string) => {
   for (let i = 0; i < inputString?.length; i++) {
     const char = inputString[i];
 
-    if (/[.,!? ]/.test(char)) {
+    if (/[.!?]/.test(char)) {
       if (currentWord) {
         result.push(currentWord);
         currentWord = '';
@@ -65,10 +65,10 @@ export const splitText = (section: EditorSection): string[] => {
 
 export const getPositionIgnoringNewlines = (
   charPosition: CharPosition,
-  text: string
+  text: string | undefined
 ): number => {
   const { line, character } = charPosition;
-  const lines = text.split('\n');
+  const lines = (text || '').split('\n');
   let currentPosition = 0;
 
   for (let i = 0; i < line; i++) {

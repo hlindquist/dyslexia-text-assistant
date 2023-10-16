@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-export type ChangeType = 'skip' | 'added' | 'removed';
+export type ChangeType = 'skipped' | 'added' | 'removed';
 
 export interface WordChange {
   word: string;
@@ -48,13 +48,17 @@ export interface ChatResponse {
 
 export interface EditorSection {
   text: string;
-  lines: number;
   ranges: WordChange[];
 }
 
 export interface SpellingSection {
   original: EditorSection;
   corrected: EditorSection;
+}
+
+export interface DiffChanges {
+  original: WordChange[];
+  corrected: WordChange[];
 }
 
 export interface RestRequest {
@@ -67,11 +71,21 @@ export interface AjaxResponse<T> {
   data: T;
 }
 
+export type Language = 'norwegian' | 'english' | '';
+
 export interface ContentMessage {
   text: string;
-  language: string;
+  language: Language;
   apiKey: string;
   charPosition: CharPosition;
+}
+
+interface ChangeHistory {
+  time: string;
+  text: string;
+  charPosition: CharPosition;
+  originalTokens: TextToken[];
+  correctedTokens: TextToken[];
 }
 
 export interface TextAssistantState {
@@ -79,9 +93,7 @@ export interface TextAssistantState {
   language: string | undefined;
   text: string | undefined;
   charPosition: number | undefined;
-  spellingSection: SpellingSection | undefined;
   originalTokens: TextToken[] | undefined;
   correctedTokens: TextToken[] | undefined;
-  originalHtml: string | undefined;
-  correctedHtml: string | undefined;
+  debug: ChangeHistory[];
 }

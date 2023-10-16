@@ -23,9 +23,9 @@ describe('transformTokensToHtml', () => {
   it('should surround added words with span tags', () => {
     const tokens: TextToken[] = [
       { original: '', type: 'current' },
-      { original: 'The', type: 'skip' },
+      { original: 'The', type: 'skipped' },
       { original: 'quick', type: 'added' },
-      { original: 'brown', type: 'skip' },
+      { original: 'brown', type: 'skipped' },
       { original: 'fox', type: 'added' },
     ];
 
@@ -39,9 +39,9 @@ describe('transformTokensToHtml', () => {
     const tokens: TextToken[] = [
       { original: '', type: 'current' },
       { original: 'quick', type: 'added' },
-      { original: ' ', type: 'skip' },
-      { original: 'quick', type: 'skip' },
-      { original: ' ', type: 'skip' },
+      { original: ' ', type: 'skipped' },
+      { original: 'quick', type: 'skipped' },
+      { original: ' ', type: 'skipped' },
       { original: 'quick', type: 'added' },
     ];
 
@@ -55,17 +55,17 @@ describe('transformTokensToHtml', () => {
   it('should surround added and removed words with span tags', () => {
     const tokens: TextToken[] = [
       { original: '', type: 'current' },
-      { original: 'Hello', type: 'skip' },
-      { original: ',', type: 'skip' },
-      { original: ' ', type: 'skip' },
+      { original: 'Hello', type: 'skipped' },
+      { original: ',', type: 'skipped' },
+      { original: ' ', type: 'skipped' },
       { original: 'bah', type: 'removed' },
-      { original: ' ', type: 'skip' },
-      { original: 'here', type: 'skip' },
-      { original: ' ', type: 'skip' },
-      { original: 'is', type: 'skip' },
-      { original: ' ', type: 'skip' },
+      { original: ' ', type: 'skipped' },
+      { original: 'here', type: 'skipped' },
+      { original: ' ', type: 'skipped' },
+      { original: 'is', type: 'skipped' },
+      { original: ' ', type: 'skipped' },
       { original: 'text', type: 'added' },
-      { original: '.', type: 'skip' },
+      { original: '.', type: 'skipped' },
     ];
 
     const result = transformTokensToHtml(tokens);
@@ -78,14 +78,14 @@ describe('transformTokensToHtml', () => {
   it('should surround correct instance of word with span tag when multiple instances', () => {
     const tokens: TextToken[] = [
       { original: '', type: 'current' },
-      { original: 'Hey', type: 'skip' },
-      { original: ',', type: 'skip' },
-      { original: ' ', type: 'skip' },
-      { original: 'hi', type: 'skip' },
+      { original: 'Hey', type: 'skipped' },
+      { original: ',', type: 'skipped' },
+      { original: ' ', type: 'skipped' },
+      { original: 'hi', type: 'skipped' },
       { original: ',', type: 'removed' },
-      { original: ' ', type: 'skip' },
-      { original: 'you', type: 'skip' },
-      { original: '.', type: 'skip' },
+      { original: ' ', type: 'skipped' },
+      { original: 'you', type: 'skipped' },
+      { original: '.', type: 'skipped' },
     ];
 
     const result = transformTokensToHtml(tokens);

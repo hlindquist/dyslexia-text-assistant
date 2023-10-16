@@ -41,8 +41,8 @@ describe('surroundWordsWithSpan', () => {
 
   it('should not surround words with <span> tags when changes are not "added" or "removed"', () => {
     const wordChanges: WordChange[] = [
-      { word: 'apple', change: 'skip' },
-      { word: 'banana', change: 'skip' },
+      { word: 'apple', change: 'skipped' },
+      { word: 'banana', change: 'skipped' },
     ];
 
     const splitText: string[] = ['apple', 'banana', 'cherry'];
