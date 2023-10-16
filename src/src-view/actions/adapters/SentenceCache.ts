@@ -15,28 +15,19 @@
  * Author: Håkon Lindquist
  */
 
-import {
-  DiffChanges,
-  EditorSection,
-  SpellingSection,
-  WordChange,
-} from '../../types/types';
+import { LRUCache } from 'lru-cache';
+import { Sentence } from '../../../types/types';
 
-export const createSpellingSection = (
-  content: string,
-  response: string,
-  diffChanges: DiffChanges
-): SpellingSection => {
-  return {
-    original: createSection(content, diffChanges.original),
-    corrected: createSection(response, diffChanges.corrected),
+const sentenceCache = new LRUCache({ max: 500 });
+
+class SentenceCache {
+  static get = (hash: string): Sentence | undefined => {
+    return sentenceCache.get(hash) as Sentence | undefined;
   };
-};
 
-export const createSection = (
-  content: string,
-  wordChanges: WordChange[]
-): EditorSection => ({
-  text: content,
-  ranges: wordChanges,
-});
+  static set = (hash: string, sentence: Sentence) => {
+    sentence && sentenceCache.set(hash, sentence);
+  };
+}
+
+export default SentenceCache;

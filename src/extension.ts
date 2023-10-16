@@ -39,32 +39,51 @@ const getConfiguredApiKey = (configuration: vscode.WorkspaceConfiguration) => {
 export function activate(context: vscode.ExtensionContext) {
   let assistantView: AssistantView | undefined = undefined;
 
+  const handleUpdate = (text: string) => {
+    const configuration = vscode.workspace.getConfiguration();
+    const apiKey = getConfiguredApiKey(configuration);
+    const language = getConfiguredLanguage(configuration);
+
+    if (text) {
+      assistantView?.updateText({
+        text,
+        language,
+        apiKey,
+      });
+    }
+  };
+
+  let lastText: string = '';
+  const handleActiveTextDocumentChange = (document: vscode.TextDocument) => {
+    const text = document.getText();
+
+    if (text !== lastText) {
+      lastText = text;
+
+      handleUpdate(text);
+    }
+  };
+
   let lastChange: string | undefined = undefined;
   const handleTextChange = (event: vscode.TextDocumentChangeEvent) => {
     if (event?.contentChanges?.length > 0) {
       const activeEditor = vscode.window.activeTextEditor;
 
       const text = activeEditor?.document.getText();
-      if (text !== lastChange) {
-        const configuration = vscode.workspace.getConfiguration();
-        const apiKey = getConfiguredApiKey(configuration);
-        const language = getConfiguredLanguage(configuration);
-        const charPosition = activeEditor?.selection.active as CharPosition;
+      if (text && text !== lastChange) {
         lastChange = text;
-
-        if (text) {
-          assistantView?.updateText({
-            text,
-            language,
-            apiKey,
-            charPosition,
-          });
-        }
+        handleUpdate(text);
       }
     }
   };
 
   vscode.workspace.onDidChangeTextDocument(handleTextChange);
+
+  vscode.window.onDidChangeActiveTextEditor((editor) => {
+    if (editor) {
+      handleActiveTextDocumentChange(editor.document);
+    }
+  });
 
   let lastPosition: CharPosition | undefined = undefined;
   vscode.window.onDidChangeTextEditorSelection((event) => {

@@ -7,24 +7,14 @@ declare const OPENAI_TEST_KEY: string;
 
 const DebugPane = () => {
   const [text, setText] = useState('');
-  const [charPosition, setCharPosition] = useState({ line: 0, character: 0 });
 
   const handleChange = (event) => {
     const newText = event.target.value;
-
-    const selectionStart = event.target.selectionStart;
-
-    const lines = newText.substr(0, selectionStart).split('\n');
-    const line = lines.length - 1;
-    const character = lines[line].length;
-
-    setCharPosition({ line, character });
 
     debugContentMessage({
       text: newText,
       language: 'norwegian',
       apiKey: OPENAI_TEST_KEY,
-      charPosition: { ...charPosition },
     });
     setText(newText);
   };

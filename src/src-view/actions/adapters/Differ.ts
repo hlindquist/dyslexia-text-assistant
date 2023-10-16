@@ -1,6 +1,6 @@
 import { Change, diffWords } from 'diff';
 import { DiffChanges, WordChange } from '../../../types/types';
-import { splitStringWithStopwords } from '../../utils/textUtils';
+import { splitIntoSentences } from '../../utils/textUtils';
 
 const consolidateWordChanges = (wordChanges: WordChange[]): WordChange[] => {
   if (wordChanges.length === 0) {
@@ -45,7 +45,7 @@ const splitStopwords = (
   changes: WordChange[],
   currentChange: WordChange
 ): WordChange[] => {
-  const splitChanges = splitStringWithStopwords(currentChange.word);
+  const splitChanges = splitIntoSentences(currentChange.word);
   if (currentChange?.word?.length > 1 && splitChanges?.length > 1) {
     const splittedList = splitChanges
       .filter((word) => word !== '')

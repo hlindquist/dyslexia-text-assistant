@@ -18,8 +18,9 @@
 import {
   ChatResponse,
   Conversation,
+  CorrectionParams,
   Sentence,
-  SentenceWithConversation,
+  Spellchecker,
 } from '../../../types/types';
 import Ajax from './Ajax';
 
@@ -72,43 +73,35 @@ const createConversationPart = (conversation: Sentence[]): Conversation[] =>
     })
     .flat();
 
-class ChatGPTConversational {
-  apiKey: string;
-  language: string;
-
-  constructor(apiKey: string, language: string) {
-    this.apiKey = apiKey;
-    this.language = language;
-  }
-
-  spellcheck = async (
-    sentence: SentenceWithConversation
+class ChatGPTConversational implements Spellchecker {
+  correct = async (
+    params: CorrectionParams
   ): Promise<[undefined, Sentence] | [Error, undefined]> => {
+    const { apiKey, language, sentence } = params;
     const conversationPrompt = createConversationPart(
       sentence.conversationPrefix
     );
     const request = {
       url: API_URL,
-      body: createPrompt(sentence.original, this.language, conversationPrompt),
-      headers: createHeaders(this.apiKey),
+      body: createPrompt(sentence.original, language, conversationPrompt),
+      headers: createHeaders(apiKey),
     };
 
     return Ajax.post<ChatResponse>(request)
       .then((response) => {
         const responseData = response.data;
 
-        if (
-          responseData.choices &&
-          responseData.choices?.length > 0 &&
-          responseData.choices[0].message
-        ) {
+        if (response.ok && responseData.choices[0]?.message?.content) {
           const correctedSentence: Sentence = {
             ...sentence,
             corrected: responseData.choices[0].message.content,
           };
           return [undefined, correctedSentence] as [undefined, Sentence];
         } else {
-          return [Error('No content'), undefined] as [Error, undefined];
+          return [Error(response.statusText || 'No content'), undefined] as [
+            Error,
+            undefined
+          ];
         }
       })
       .catch((error) => {

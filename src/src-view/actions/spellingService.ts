@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,16 +16,14 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
-import { splitStringWithStopwords } from './textUtils';
+import { abstractCheckSpelling } from '../functions/spellingFunctions';
+import store from '../redux/store';
+import ChatGPTConversational from './adapters/ChatGptConversational';
+import SentenceCache from './adapters/SentenceCache';
 
-describe('splitStringWithSpecialChars', () => {
-  it('should split the input string into an array with special characters preserved', () => {
-    const inputString = '.hei!halo,,';
-    const expectedOutput = ['.', 'hei', '!', 'halo,,'];
-
-    const result = splitStringWithStopwords(inputString);
-
-    expect(result).toEqual(expectedOutput);
-  });
-});
+export const checkSpelling = abstractCheckSpelling(
+  new ChatGPTConversational(),
+  store,
+  console,
+  SentenceCache
+);
