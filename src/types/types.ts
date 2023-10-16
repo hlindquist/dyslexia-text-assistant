@@ -61,6 +61,21 @@ export interface DiffChanges {
   corrected: WordChange[];
 }
 
+export interface Conversation {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface Sentence {
+  hash: string;
+  original: string;
+  corrected?: string;
+}
+
+export interface SentenceWithConversation extends Sentence {
+  conversationPrefix: Sentence[];
+}
+
 export interface RestRequest {
   url: string;
   body: any;
