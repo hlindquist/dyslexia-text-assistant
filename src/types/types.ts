@@ -72,6 +72,7 @@ export interface Sentence {
   corrected?: string;
   originalTokens?: TextToken[];
   correctedTokens?: TextToken[];
+  underCorrection?: boolean;
 }
 
 export interface HtmlSentence {
@@ -79,6 +80,7 @@ export interface HtmlSentence {
   original: string;
   originalHtml: string | undefined;
   correctedHtml: string | undefined;
+  underCorrection?: boolean;
 }
 
 export interface SentenceWithConversation extends Sentence {

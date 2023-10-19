@@ -25,7 +25,16 @@ import {
   Logger,
   Sentence,
   Spellchecker,
+  TextAssistantState,
 } from '../../types/types';
+
+const mockedState: TextAssistantState = {
+  text: undefined,
+  charPosition: undefined,
+  sentences: [],
+  incompleteSentence: '',
+  debug: [],
+};
 
 const mockedSentence: Sentence = {
   hash: '9ab954a9f3b110563706651dd63b96d0',
@@ -54,6 +63,7 @@ describe('checkSpelling', () => {
     };
 
     const mockedCheckSpelling = abstractCheckSpelling(
+      mockedState,
       mockedSpellchecker,
       mockedDispatcher,
       mockedLogger,
@@ -74,17 +84,21 @@ describe('checkSpelling', () => {
 
     const dispatchCalls = dispatchSpy.mock.calls;
 
-    expect(dispatchSpy).toHaveBeenCalledTimes(2);
-    expect(dispatchCalls[0][0]).toEqual({
+    expect(dispatchCalls[1][0]).toEqual({
       payload: [
         {
           hash: '9ab954a9f3b110563706651dd63b96d0',
           original: 'This is an original mock sentence.',
+          underCorrection: true,
+          originalTokens: [
+            { original: 'This is an original mock sentence.', type: 'removed' },
+          ],
+          correctedTokens: [{ original: '' }],
         },
       ],
       type: 'textAssistant/setSentences',
     });
-    expect(dispatchCalls[1][0]).toEqual({
+    expect(dispatchCalls[2][0]).toEqual({
       type: 'textAssistant/updateSentence',
       payload: {
         corrected: 'This is a corrected mock sentence.',
@@ -128,6 +142,7 @@ describe('checkSpelling', () => {
     const dispatchSpy = jest.spyOn(mockedDispatcher, 'dispatch');
 
     const checkSpellingWithMockedError = abstractCheckSpelling(
+      mockedState,
       mockedSpellcheckerWithError,
       mockedDispatcher,
       mockedLogger,
@@ -143,7 +158,6 @@ describe('checkSpelling', () => {
         language: 'english',
       })
     );
-
-    expect(dispatchSpy).toHaveBeenCalledTimes(1);
+    expect(dispatchSpy).toHaveBeenCalledTimes(2);
   });
 });

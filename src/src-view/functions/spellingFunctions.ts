@@ -27,6 +27,7 @@ import {
   SentenceCacher,
   Spellchecker,
   SpellingSection,
+  TextAssistantState,
   WordChange,
 } from '../../types/types';
 import { Sentence, SentenceWithConversation } from '../../types/types';
@@ -38,10 +39,53 @@ import {
   splitIntoSentences,
   trimToCompleteSentences,
 } from '../utils/textUtils';
-import { setSentences, updateSentence } from '../redux/textAssistantSlice';
+import {
+  setSentences,
+  setText,
+  updateSentence,
+} from '../redux/textAssistantSlice';
+
+export const markNewSentences = (sentences: Sentence[]): Sentence[] =>
+  sentences.map((sentence) => {
+    return !sentence.corrected
+      ? {
+          ...sentence,
+          underCorrection: true,
+        }
+      : sentence;
+  });
+
+export const setOldCorrectedText = (
+  sentences: Sentence[],
+  oldSentences: Sentence[]
+): Sentence[] => {
+  return sentences.map((sentence: Sentence, index: number) => {
+    if (sentence.underCorrection) {
+      const oldCorrection =
+        findCorrectionByLeftSibling(index, sentences, oldSentences) ||
+        findCorrectionByRightSibling(index, sentences, oldSentences);
+      if (oldCorrection) {
+        return {
+          ...sentence,
+          corrected: oldCorrection,
+        };
+      }
+    }
+
+    return sentence;
+  });
+};
+
+const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
+  sentences.map((sentence) =>
+    sentence.corrected && sentence.underCorrection
+      ? addTokens(sentence)
+      : sentence
+  );
 
 export const abstractCheckSpelling =
   (
+    state: TextAssistantState,
     spellchecker: Spellchecker,
     dispatcher: Dispatcher,
     logger: Logger,
@@ -49,6 +93,8 @@ export const abstractCheckSpelling =
   ) =>
   (contentMessage: ContentMessage): Promise<Sentence | undefined>[] => {
     const { apiKey, language, text } = contentMessage;
+    const oldSentences = state.sentences;
+
     const updatedSentences: Sentence[] = R.pipe(
       (text: string) => trimToCompleteSentences(text),
       (text: string) => splitIntoSentences(text),
@@ -56,7 +102,15 @@ export const abstractCheckSpelling =
       (sentences: Sentence[]) => updateSentencesFromCache(sentences)
     )(text);
 
-    dispatcher.dispatch(setSentences(updatedSentences));
+    const updatedWithTemporaryCorrections: Sentence[] = R.pipe(
+      (sentences: Sentence[]) => markNewSentences(sentences),
+      (sentences: Sentence[]) => setOldCorrectedText(sentences, oldSentences),
+      (sentences: Sentence[]) => runAddTokensOnMarkedSentences(sentences)
+    )(updatedSentences);
+
+    dispatcher.dispatch(setText(contentMessage.text));
+
+    dispatcher.dispatch(setSentences(updatedWithTemporaryCorrections));
 
     const sentencesWithConversation: SentenceWithConversation[] = R.pipe(
       (sentences: Sentence[]) => getSentencesWithoutCorrection(sentences),
@@ -88,7 +142,7 @@ export const abstractCheckSpelling =
     );
   };
 
-export const addTokens = (sentence: Sentence) => {
+export const addTokens = (sentence: Sentence): Sentence => {
   const diffChanges = Differ.compare(
     sentence.original,
     sentence.corrected || ''
@@ -177,3 +231,26 @@ export const amendConversationPrefixes = (
   sentencesWithoutCorrection.map((sentence) =>
     amendConversationPrefix(sentence, sentences)
   );
+
+const findCorrectionByLeftSibling = (
+  index: number,
+  sentences: Sentence[],
+  oldSentences: Sentence[]
+) => findCorrectionBySibling(index - 1, sentences, oldSentences);
+const findCorrectionByRightSibling = (
+  index: number,
+  sentences: Sentence[],
+  oldSentences: Sentence[]
+) => findCorrectionBySibling(index + 1, sentences, oldSentences);
+
+const findCorrectionBySibling = (
+  siblingIndex: number,
+  sentences: Sentence[],
+  oldSentences: Sentence[]
+) => {
+  const leftSiblingHash = sentences[siblingIndex]?.hash;
+  const selfSiblingCorrectionIndex = oldSentences.findIndex(
+    (s) => s.hash === leftSiblingHash
+  );
+  return oldSentences[selfSiblingCorrectionIndex + 1]?.corrected;
+};
