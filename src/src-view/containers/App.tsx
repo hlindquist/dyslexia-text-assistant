@@ -11,10 +11,7 @@ import {
 } from '../redux/textAssistantSlice';
 import { scrollToTarget } from '../utils/browserTools';
 import { insertMissingTokens } from '../functions/tokenUtils';
-import {
-  transformToHtmlSentences,
-  transformToPulsatingBlocks,
-} from '../utils/htmlTextUtil';
+import { transformToHtmlSentences } from '../utils/htmlTextUtil';
 import { isScrollingEnabled } from '../utils/featureToggle';
 
 const App: React.FC = () => {
@@ -66,9 +63,7 @@ const App: React.FC = () => {
               {index > 0 && <span> </span>}
               <span
                 dangerouslySetInnerHTML={{
-                  __html:
-                    sentence.originalHtml ||
-                    transformToPulsatingBlocks(sentence.original),
+                  __html: sentence.originalHtml || sentence.original,
                 }}
                 onMouseDown={handleMouseDown}
                 onDragStart={handleDragStart}
@@ -90,9 +85,7 @@ const App: React.FC = () => {
               {index > 0 && <span> </span>}
               <span
                 dangerouslySetInnerHTML={{
-                  __html:
-                    sentence.correctedHtml ||
-                    transformToPulsatingBlocks(sentence.original),
+                  __html: sentence.correctedHtml || sentence.original,
                 }}
                 onMouseDown={handleMouseDown}
                 onDragStart={handleDragStart}
