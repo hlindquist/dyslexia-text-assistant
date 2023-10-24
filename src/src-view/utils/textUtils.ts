@@ -1,36 +1,62 @@
 import { escapeRegExp } from 'lodash';
 import {
   CharPosition,
+  ContentMessage,
   EditorSection,
   TextToken,
   WordChange,
 } from '../../types/types';
 
 import { findLastIndex } from 'lodash';
+import check from 'check-types';
 
-export const splitStringWithStopwords = (inputString: string) => {
+export const endsWithStopWord = (inputString: string): boolean => {
+  const stopWords = ['.', '?', '!'];
+
+  for (const stopWord of stopWords) {
+    if (inputString.endsWith(stopWord)) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const splitIntoSentences = (inputString: string) => {
   const result = [];
-  let currentWord = '';
+  let currentSentence = '';
 
   for (let i = 0; i < inputString?.length; i++) {
     const char = inputString[i];
 
     if (/[.!?]/.test(char)) {
-      if (currentWord) {
-        result.push(currentWord);
-        currentWord = '';
+      currentSentence += char;
+
+      if (currentSentence) {
+        result.push(currentSentence.trim());
+        currentSentence = '';
       }
-      result.push(char);
     } else {
-      currentWord += char;
+      currentSentence += char;
     }
   }
 
-  if (currentWord) {
-    result.push(currentWord);
+  if (currentSentence) {
+    result.push(currentSentence.trim());
   }
 
   return result;
+};
+
+export const createTrimmedContentMessage = (contentMessage: ContentMessage) => {
+  if (check.nonEmptyString(contentMessage.text)) {
+    return {
+      ...contentMessage,
+      text: trimToCompleteSentences(contentMessage.text),
+    };
+  } else {
+    return contentMessage;
+  }
 };
 
 export const trimToCompleteSentences = (text: string): string => {
@@ -108,4 +134,15 @@ export const splitFullSentences = (tokens: TextToken[]): TextToken[] => {
   });
 
   return resultArray;
+};
+
+export const extractIncompleteSentence = (text: string): string => {
+  const sentences = text.split(/[.?!]/);
+  const nonEmptySentences = sentences.filter((sentence) => sentence.length > 0);
+
+  if (nonEmptySentences.length > 0 && !text.match(/[.?!]$/)) {
+    return nonEmptySentences[nonEmptySentences.length - 1];
+  } else {
+    return '';
+  }
 };

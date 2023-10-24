@@ -6,6 +6,7 @@ Key Features of this assistant:
 - Highlights corrections in both the original and corrected text for easy problem identification.
 - Highlights the entire word instead of individual characters to promote problem-solving and careful reading of words.
 - It only corrects whole sentences to encourage the completion of sentences before checking for faults, so as not to interrupt the flow of writing.
+- Corrects each sentence asynchronously, rather than processing the entire text at once, to provide a faster and more responsive user experience.
 - Disables the ability to mark the corrected text to prevent "cheating".
 - Utilizes OpenAI GPT 3.5 turbo for corrections.
 - Supports both English and Norwegian.

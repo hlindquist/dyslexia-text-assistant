@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { multiSplit } from './textUtils';
+import { multiSplit } from '../textUtils';
 
 describe('multiSplit', () => {
   it('should split a string based on multiple tokens', () => {

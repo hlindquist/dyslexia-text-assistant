@@ -23,6 +23,9 @@ function transformAxiosResponse<T>(
 ): AjaxResponse<T> {
   return {
     data: axiosResponse.data,
+    ok: axiosResponse.status >= 200 && axiosResponse.status < 300,
+    httpCode: axiosResponse.status,
+    statusText: axiosResponse.statusText,
   };
 }
 

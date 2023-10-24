@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
-import Differ from '../Differ';
-import { DiffChanges } from '../../../../types/types';
+import Differ from './Differ';
+import { DiffChanges } from '../../../types/types';
 
 describe('Differ.compare', () => {
   it('should compare words in the texts', () => {

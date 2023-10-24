@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -17,31 +18,67 @@
 
 import * as R from 'ramda';
 
-import { EditorSection, TextToken } from '../../types/types';
+import { EditorSection, Sentence, TextToken } from '../../types/types';
 import {
   identifyChangeTypesInText,
   transformTextsToTextTokens,
 } from '../utils/htmlTextUtil';
 import { splitFullSentences, splitText } from '../utils/textUtils';
 
-export const insertsCharacterPositionToken = (
-  tokens: TextToken[],
+export const findIndexOfSentence = (
+  sentences: Sentence[],
   position: number
-): TextToken[] => {
-  const modifiedTokens = [...tokens];
+) => {
+  let currentPosition = 0;
 
-  const insertIndex = modifiedTokens.findIndex(
-    (token) => (position -= token.original?.length) <= 0
-  );
+  for (let i = 0; i < sentences.length; i++) {
+    const sentence = sentences[i];
+    const sentenceLength = sentence.original.length;
 
-  modifiedTokens.splice(insertIndex, 0, {
-    original: '',
-    modified: '',
-    type: 'current',
-  });
+    if (position <= currentPosition + sentenceLength) {
+      return i;
+    }
 
-  return modifiedTokens;
+    currentPosition += sentenceLength;
+  }
+
+  return sentences.length;
 };
+
+const currentPositionSentence = {
+  hash: '',
+  original: '',
+  corrected: '',
+  originalTokens: [{ original: '', type: 'current' }],
+  correctedTokens: [{ original: '', type: 'current' }],
+} as Sentence;
+
+const insertSkipTokens = (sentences: Sentence[]): Sentence[] => sentences;
+
+export const insertMissingTokens = (
+  sentences: Sentence[],
+  position: number
+): Sentence[] =>
+  R.pipe(
+    (sentences: Sentence[]) => insertPositionToken(position, sentences),
+    (sentences: Sentence[]) => insertSkipTokens(sentences)
+  )(sentences);
+
+const insertPositionSentence = (sentences: Sentence[], indexToInsert: number) =>
+  sentences
+    .map((sentence: Sentence, index) =>
+      index === indexToInsert ? [currentPositionSentence, sentence] : [sentence]
+    )
+    .flat();
+
+export const insertPositionToken = (
+  position: number,
+  sentences: Sentence[]
+): Sentence[] =>
+  R.pipe(
+    (sentences: Sentence[]) => findIndexOfSentence(sentences, position),
+    (index: number) => insertPositionSentence(sentences, index)
+  )(sentences);
 
 export const deleteCurrentPosition = (textTokens: TextToken[]): TextToken[] =>
   textTokens.filter((token) => token.type !== 'current');

@@ -1,20 +1,26 @@
 import * as React from 'react';
+import './App.scss';
+
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
   selectCharPosition,
-  selectCorrectedTokens,
-  selectOriginalTokens,
+  selectIncompleteSentence,
+  selectSentences,
 } from '../redux/textAssistantSlice';
 import { scrollToTarget } from '../utils/browserTools';
-import { transformTokensToHtml } from '../utils/htmlTextUtil';
-import { insertsCharacterPositionToken } from '../functions/tokenUtils';
+import { insertMissingTokens } from '../functions/tokenUtils';
+import {
+  transformToHtmlSentences,
+  transformToPulsatingBlocks,
+} from '../utils/htmlTextUtil';
+import { isScrollingEnabled } from '../utils/featureToggle';
 
 const App: React.FC = () => {
-  const originalTokens = useSelector(selectOriginalTokens);
-  const correctedTokens = useSelector(selectCorrectedTokens);
   const charPosition = useSelector(selectCharPosition);
+  const sentences = useSelector(selectSentences);
+  const incompleteSentence = useSelector(selectIncompleteSentence);
 
   const scrollToCurrentPosition = () => {
     scrollToTarget('.original', '.currentPosition');
@@ -22,26 +28,21 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    scrollToCurrentPosition();
-  }, [originalTokens, correctedTokens, charPosition]);
+    if (isScrollingEnabled()) {
+      scrollToCurrentPosition();
+    }
+  }, [charPosition]);
 
   useEffect(() => {
-    window.addEventListener('resize', scrollToCurrentPosition);
+    if (isScrollingEnabled()) {
+      window.addEventListener('resize', scrollToCurrentPosition);
 
-    return () => {
-      window.removeEventListener('resize', scrollToCurrentPosition);
-    };
+      return () => {
+        window.removeEventListener('resize', scrollToCurrentPosition);
+      };
+    }
+    return undefined;
   }, []);
-
-  if (!originalTokens || !correctedTokens) {
-    return <></>;
-  }
-  const originalHtml = transformTokensToHtml(
-    insertsCharacterPositionToken(originalTokens, charPosition || 0)
-  );
-  const correctedHtml = transformTokensToHtml(
-    insertsCharacterPositionToken(correctedTokens, charPosition || 0)
-  );
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -51,27 +52,56 @@ const App: React.FC = () => {
     event.preventDefault();
   };
 
-  return originalHtml && correctedHtml ? (
+  const modifiedSentences = insertMissingTokens(sentences, charPosition);
+  const htmlSentences = transformToHtmlSentences(modifiedSentences);
+
+  const shouldShowIncompleteSentence = () => incompleteSentence.trim() !== '';
+
+  return (
     <div>
       <div className="originalWrapper">
-        <div
-          className="original"
-          dangerouslySetInnerHTML={{ __html: originalHtml }}
-          onMouseDown={handleMouseDown}
-          onDragStart={handleDragStart}
-        />
+        <div>
+          {htmlSentences.map((sentence, index) => (
+            <span key={sentence.hash + 'original'}>
+              {index > 0 && <span> </span>}
+              <span
+                dangerouslySetInnerHTML={{
+                  __html:
+                    sentence.originalHtml ||
+                    transformToPulsatingBlocks(sentence.original),
+                }}
+                onMouseDown={handleMouseDown}
+                onDragStart={handleDragStart}
+              />
+            </span>
+          ))}
+          {shouldShowIncompleteSentence() && (
+            <>
+              <span className="incompleteSentence">{incompleteSentence}</span>
+              <span className="endPrompt"></span>
+            </>
+          )}
+        </div>
       </div>
       <div className="correctedWrapper">
-        <div
-          className="corrected"
-          dangerouslySetInnerHTML={{ __html: correctedHtml }}
-          onMouseDown={handleMouseDown}
-          onDragStart={handleDragStart}
-        />
+        <div>
+          {htmlSentences.map((sentence, index) => (
+            <span key={sentence.hash + 'corrected'}>
+              {index > 0 && <span> </span>}
+              <span
+                dangerouslySetInnerHTML={{
+                  __html:
+                    sentence.correctedHtml ||
+                    transformToPulsatingBlocks(sentence.original),
+                }}
+                onMouseDown={handleMouseDown}
+                onDragStart={handleDragStart}
+              />
+            </span>
+          ))}
+        </div>
       </div>
     </div>
-  ) : (
-    <></>
   );
 };
 

@@ -15,7 +15,12 @@
  * Author: Håkon Lindquist
  */
 
-import { TextToken, WordChange } from '../../types/types';
+import {
+  HtmlSentence,
+  Sentence,
+  TextToken,
+  WordChange,
+} from '../../types/types';
 import * as R from 'ramda';
 
 /* eslint-disable indent */
@@ -122,10 +127,32 @@ export const transformTokens = (tokens: TextToken[]): TextToken[] =>
 const getModifiedValue = (tokens: TextToken[]) =>
   tokens.map((token) => token.modified || token.original);
 
-export const transformTokensToHtml = (textTokens: TextToken[]) =>
-  R.pipe(
-    (tokens: TextToken[]) => transformTokens(tokens),
-    (tokens: TextToken[]) => getModifiedValue(tokens),
-    (texts: string[]) => texts.join(''),
-    (text: string) => transformNewlinesToBreaklines(text)
-  )(textTokens);
+export const transformToPulsatingBlocks = (sentence: string) =>
+  sentence
+    .split('')
+    .map((character) =>
+      character !== ' ' ? '<span class="pulsatingBlock"></span>' : ' '
+    )
+    .join('');
+
+export const transformTokensToHtml = (
+  textTokens: TextToken[] | undefined
+): string | undefined =>
+  textTokens
+    ? R.pipe(
+        (tokens: TextToken[]) => transformTokens(tokens),
+        (tokens: TextToken[]) => getModifiedValue(tokens),
+        (texts: string[]) => texts.join(''),
+        (text: string) => transformNewlinesToBreaklines(text)
+      )(textTokens)
+    : undefined;
+
+export const transformToHtmlSentences = (
+  sentences: Sentence[]
+): HtmlSentence[] =>
+  sentences.map((sentence: Sentence) => ({
+    hash: sentence.hash,
+    original: sentence.original,
+    originalHtml: transformTokensToHtml(sentence.originalTokens),
+    correctedHtml: transformTokensToHtml(sentence.correctedTokens),
+  }));

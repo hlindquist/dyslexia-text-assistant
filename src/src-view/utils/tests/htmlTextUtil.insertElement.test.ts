@@ -16,8 +16,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { insertsCharacterPositionElement } from './htmlTextUtil';
-import { TextToken } from '../../types/types';
+import { insertsCharacterPositionElement } from '../htmlTextUtil';
+import { TextToken } from '../../../types/types';
 
 describe('insertsCharacterPositionElement', () => {
   it('should insert an empty span at the beginning of the tokens array', () => {

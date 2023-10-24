@@ -25,34 +25,3 @@ body {
   font-size: 16px;
   line-height: 1.25;
 }
-
-.added {
-  color: #428BCA;
-}
-
-.removed {
-  color: #CA6E42;
-}
-
-.originalWrapper {
-  padding: 16px;
-  background-color: #f0f0f0;
-
-  .original {
-    max-height: 1.25 * 10rem;
-    overflow-y: hidden;
-  }
-}
-
-.correctedWrapper {
-  padding: 16px;
-
-  .corrected {
-    max-height: 1.25 * 10rem;
-    overflow-y: hidden;
-  }
-}
-
-.currentPosition {
-  width: 0;
-}

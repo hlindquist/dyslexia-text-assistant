@@ -24,13 +24,12 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
-
-const debug = false;
+import { isDebugModeEnabled } from './utils/featureToggle';
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
   <Provider store={store}>
     <App />
-    {debug ? <DebugPane /> : null}
+    {isDebugModeEnabled() ? <DebugPane /> : null}
   </Provider>
 );

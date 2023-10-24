@@ -61,6 +61,30 @@ export interface DiffChanges {
   corrected: WordChange[];
 }
 
+export interface Conversation {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface Sentence {
+  hash: string;
+  original: string;
+  corrected?: string;
+  originalTokens?: TextToken[];
+  correctedTokens?: TextToken[];
+}
+
+export interface HtmlSentence {
+  hash: string;
+  original: string;
+  originalHtml: string | undefined;
+  correctedHtml: string | undefined;
+}
+
+export interface SentenceWithConversation extends Sentence {
+  conversationPrefix: Sentence[];
+}
+
 export interface RestRequest {
   url: string;
   body: any;
@@ -69,6 +93,9 @@ export interface RestRequest {
 
 export interface AjaxResponse<T> {
   data: T;
+  ok: boolean;
+  httpCode: number;
+  statusText: string;
 }
 
 export type Language = 'norwegian' | 'english' | '';
@@ -77,23 +104,43 @@ export interface ContentMessage {
   text: string;
   language: Language;
   apiKey: string;
-  charPosition: CharPosition;
 }
 
 interface ChangeHistory {
   time: string;
   text: string;
   charPosition: CharPosition;
-  originalTokens: TextToken[];
-  correctedTokens: TextToken[];
 }
 
 export interface TextAssistantState {
-  openAiApiKey: string | undefined;
-  language: string | undefined;
   text: string | undefined;
   charPosition: number | undefined;
-  originalTokens: TextToken[] | undefined;
-  correctedTokens: TextToken[] | undefined;
+  sentences: Sentence[];
+  incompleteSentence: string;
   debug: ChangeHistory[];
+}
+
+export interface CorrectionParams {
+  apiKey: string;
+  language: string;
+  sentence: SentenceWithConversation;
+}
+
+export interface Dispatcher {
+  dispatch: (action: any) => void;
+}
+
+export interface Logger {
+  log: (message: string, obj: any) => void;
+}
+
+export interface Spellchecker {
+  correct: (
+    params: CorrectionParams
+  ) => Promise<[undefined, Sentence] | [Error, undefined]>;
+}
+
+export interface SentenceCacher {
+  get: (hash: string) => Sentence | undefined;
+  set: (hash: string, sentence: Sentence) => void;
 }
