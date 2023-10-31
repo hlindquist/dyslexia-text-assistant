@@ -22,6 +22,7 @@ import ChatGPTConversational from './adapters/ChatGptConversational';
 import SentenceCache from './adapters/SentenceCache';
 
 export const checkSpelling = abstractCheckSpelling(
+  store.getState().textAssistant,
   new ChatGPTConversational(),
   store,
   console,
