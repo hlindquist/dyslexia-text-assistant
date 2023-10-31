@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { trimToCompleteSentences } from '../textUtils';
+import { trimToCompleteSentences } from '../textFunctions';
 
 describe('trimToCompleteSentences', () => {
   it('should trim to the last full stop', () => {

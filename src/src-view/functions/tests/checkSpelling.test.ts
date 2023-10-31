@@ -18,23 +18,14 @@
 
 import { jest, describe, it, expect } from '@jest/globals';
 
-import { abstractCheckSpelling } from './spellingFunctions';
+import { abstractCheckSpelling } from '../spellingFunctions';
 import {
   CorrectionParams,
   Dispatcher,
   Logger,
   Sentence,
   Spellchecker,
-  TextAssistantState,
-} from '../../types/types';
-
-const mockedState: TextAssistantState = {
-  text: undefined,
-  charPosition: undefined,
-  sentences: [],
-  incompleteSentence: '',
-  debug: [],
-};
+} from '../../../types/types';
 
 const mockedSentence: Sentence = {
   hash: '9ab954a9f3b110563706651dd63b96d0',
@@ -63,7 +54,6 @@ describe('checkSpelling', () => {
     };
 
     const mockedCheckSpelling = abstractCheckSpelling(
-      mockedState,
       mockedSpellchecker,
       mockedDispatcher,
       mockedLogger,
@@ -75,30 +65,29 @@ describe('checkSpelling', () => {
     const logSpy = jest.spyOn(mockedLogger, 'log');
 
     await Promise.all(
-      mockedCheckSpelling({
-        text: sampleSentence,
-        apiKey: 'apiKey',
-        language: 'english',
-      })
+      mockedCheckSpelling(
+        {
+          text: sampleSentence,
+          apiKey: 'apiKey',
+          language: 'english',
+        },
+        []
+      )
     );
 
     const dispatchCalls = dispatchSpy.mock.calls;
 
-    expect(dispatchCalls[1][0]).toEqual({
+    expect(dispatchCalls[0][0]).toEqual({
       payload: [
         {
           hash: '9ab954a9f3b110563706651dd63b96d0',
           original: 'This is an original mock sentence.',
           underCorrection: true,
-          originalTokens: [
-            { original: 'This is an original mock sentence.', type: 'removed' },
-          ],
-          correctedTokens: [{ original: '' }],
         },
       ],
       type: 'textAssistant/setSentences',
     });
-    expect(dispatchCalls[2][0]).toEqual({
+    expect(dispatchCalls[1][0]).toEqual({
       type: 'textAssistant/updateSentence',
       payload: {
         corrected: 'This is a corrected mock sentence.',
@@ -124,6 +113,7 @@ describe('checkSpelling', () => {
           { original: ' ' },
           { original: 'sentence.' },
         ],
+        underCorrection: false,
       },
     });
     expect(logSpy).not.toHaveBeenCalled();
@@ -142,7 +132,6 @@ describe('checkSpelling', () => {
     const dispatchSpy = jest.spyOn(mockedDispatcher, 'dispatch');
 
     const checkSpellingWithMockedError = abstractCheckSpelling(
-      mockedState,
       mockedSpellcheckerWithError,
       mockedDispatcher,
       mockedLogger,
@@ -152,12 +141,15 @@ describe('checkSpelling', () => {
     const sampleSentence = 'This is an original mock sentence.';
 
     Promise.all(
-      checkSpellingWithMockedError({
-        text: sampleSentence,
-        apiKey: 'apiKey',
-        language: 'english',
-      })
+      checkSpellingWithMockedError(
+        {
+          text: sampleSentence,
+          apiKey: 'apiKey',
+          language: 'english',
+        },
+        []
+      )
     );
-    expect(dispatchSpy).toHaveBeenCalledTimes(2);
+    expect(dispatchSpy).toHaveBeenCalledTimes(1);
   });
 });

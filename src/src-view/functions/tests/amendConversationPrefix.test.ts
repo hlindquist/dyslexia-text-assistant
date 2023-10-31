@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { amendConversationPrefix } from './spellingFunctions';
+import { amendConversationPrefix } from '../spellingFunctions';
 
 const createSentences = (length: number) => {
   const myNumbers: number[] = Array.from(

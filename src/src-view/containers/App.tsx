@@ -61,6 +61,9 @@ const App: React.FC = () => {
           {htmlSentences.map((sentence, index) => (
             <span key={sentence.hash + 'original'}>
               {index > 0 && <span> </span>}
+              {sentence.underCorrection && (
+                <span className="underCorrection"> </span>
+              )}
               <span
                 dangerouslySetInnerHTML={{
                   __html: sentence.originalHtml || sentence.original,
@@ -83,6 +86,9 @@ const App: React.FC = () => {
           {htmlSentences.map((sentence, index) => (
             <span key={sentence.hash + 'corrected'}>
               {index > 0 && <span> </span>}
+              {sentence.underCorrection && (
+                <span className="underCorrection"> </span>
+              )}
               <span
                 dangerouslySetInnerHTML={{
                   __html: sentence.correctedHtml || sentence.original,

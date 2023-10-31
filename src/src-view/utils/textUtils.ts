@@ -7,8 +7,8 @@ import {
   WordChange,
 } from '../../types/types';
 
-import { findLastIndex } from 'lodash';
 import check from 'check-types';
+import { trimToCompleteSentences } from '../functions/textFunctions';
 
 export const endsWithStopWord = (inputString: string): boolean => {
   const stopWords = ['.', '?', '!'];
@@ -22,32 +22,6 @@ export const endsWithStopWord = (inputString: string): boolean => {
   return false;
 };
 
-export const splitIntoSentences = (inputString: string) => {
-  const result = [];
-  let currentSentence = '';
-
-  for (let i = 0; i < inputString?.length; i++) {
-    const char = inputString[i];
-
-    if (/[.!?]/.test(char)) {
-      currentSentence += char;
-
-      if (currentSentence) {
-        result.push(currentSentence.trim());
-        currentSentence = '';
-      }
-    } else {
-      currentSentence += char;
-    }
-  }
-
-  if (currentSentence) {
-    result.push(currentSentence.trim());
-  }
-
-  return result;
-};
-
 export const createTrimmedContentMessage = (contentMessage: ContentMessage) => {
   if (check.nonEmptyString(contentMessage.text)) {
     return {
@@ -57,14 +31,6 @@ export const createTrimmedContentMessage = (contentMessage: ContentMessage) => {
   } else {
     return contentMessage;
   }
-};
-
-export const trimToCompleteSentences = (text: string): string => {
-  const charList = text.split('');
-  const lastStopCharacter = findLastIndex(charList, (char: string) =>
-    ['.', '!', '?'].includes(char)
-  );
-  return charList.slice(0, lastStopCharacter + 1).join('');
 };
 
 export function multiSplit(

@@ -151,8 +151,7 @@ export const transformToHtmlSentences = (
   sentences: Sentence[]
 ): HtmlSentence[] =>
   sentences.map((sentence: Sentence) => ({
-    hash: sentence.hash,
-    original: sentence.original,
+    ...sentence,
     originalHtml: transformTokensToHtml(sentence.originalTokens),
     correctedHtml: transformTokensToHtml(sentence.correctedTokens),
   }));

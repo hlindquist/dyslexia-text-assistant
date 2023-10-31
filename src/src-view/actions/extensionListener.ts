@@ -35,6 +35,7 @@ import { checkSpelling } from './spellingService';
 import { getTimeInMilliseconds } from '../utils/timeTools';
 
 const handleContentMessage = async (contentMessage: ContentMessage) => {
+  const state = store.getState().textAssistant;
   const hasApiKey = check.nonEmptyString(contentMessage.apiKey);
   const hasLanguage = check.nonEmptyString(contentMessage.language);
 
@@ -59,7 +60,7 @@ const handleContentMessage = async (contentMessage: ContentMessage) => {
   const incompleteSentence = extractIncompleteSentence(contentMessage.text);
   store.dispatch(setIncompleteSentence(incompleteSentence));
 
-  await Promise.all(checkSpelling(contentMessage));
+  await Promise.all(checkSpelling(contentMessage, state.sentences));
 };
 
 const handleCharPosition = (charPosition: CharPosition) => {

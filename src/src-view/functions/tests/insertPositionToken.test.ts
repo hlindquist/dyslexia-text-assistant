@@ -16,8 +16,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { insertPositionToken } from './tokenUtils';
-import { Sentence } from '../../types/types';
+import { insertPositionToken } from '../tokenUtils';
+import { Sentence } from '../../../types/types';
 
 describe('insertPositionToken', () => {
   it('should insert a token at the beginning of the first sentence', () => {
