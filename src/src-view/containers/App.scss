@@ -29,6 +29,22 @@
   width: 0;
 }
 
+.underCorrection {
+  display: inline-block;
+  width: 0.51rem;
+  height: 0.8rem;
+  margin-left: 0.1rem;
+  margin-bottom: -2px;
+  margin-right: 2.8px;
+  background-color: rgba(0, 0, 0, 0.7);
+  animation: pulsateLoading 0.7s infinite;
+}
+
+.hidden {
+  visibility: hidden;
+  display: inline-block;
+}
+
 @keyframes pulsateLoading {
   0% {
       opacity: 0.7;

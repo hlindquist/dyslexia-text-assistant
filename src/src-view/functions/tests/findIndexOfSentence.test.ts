@@ -16,8 +16,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { Sentence } from '../../types/types';
-import { findIndexOfSentence } from './tokenUtils';
+import { Sentence } from '../../../types/types';
+import { findIndexOfSentence } from '../tokenUtils';
 
 const sentences = [
   { hash: 'hash1', original: 'Sentence 1' },

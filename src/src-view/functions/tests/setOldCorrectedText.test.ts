@@ -17,13 +17,13 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { Sentence } from '../../types/types';
-import { setOldCorrectedText } from './spellingFunctions';
+import { Sentence } from '../../../types/types';
+import { setOldCorrectedText } from '../spellingFunctions';
 
 describe('setOldCorrectedText', () => {
   it('should set old corrected text on first element based on siblings', () => {
     const sentences: Sentence[] = [
-      { hash: 'hash1', original: 'Original 1', underCorrection: true },
+      { hash: 'hash11', original: 'Original 11', underCorrection: true },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
       { hash: 'hash3', original: 'Original 3', corrected: 'Corrected 3' },
     ];
@@ -38,8 +38,8 @@ describe('setOldCorrectedText', () => {
 
     expect(updatedSentences).toEqual([
       {
-        hash: 'hash1',
-        original: 'Original 1',
+        hash: 'hash11',
+        original: 'Original 11',
         corrected: 'Corrected 1',
         underCorrection: true,
       },
@@ -52,7 +52,7 @@ describe('setOldCorrectedText', () => {
     const sentences: Sentence[] = [
       { hash: 'hash1', original: 'Original 1', corrected: 'Corrected 1' },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
-      { hash: 'hash3', original: 'Original 3', underCorrection: true },
+      { hash: 'hash33', original: 'Original 33', underCorrection: true },
     ];
 
     const oldSentences: Sentence[] = [
@@ -71,8 +71,8 @@ describe('setOldCorrectedText', () => {
       },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
       {
-        hash: 'hash3',
-        original: 'Original 3',
+        hash: 'hash33',
+        original: 'Original 33',
         corrected: 'Corrected 3',
         underCorrection: true,
       },
@@ -85,7 +85,7 @@ describe('setOldCorrectedText', () => {
     ];
 
     const oldSentences: Sentence[] = [
-      { hash: 'hash1', original: 'Original 1', corrected: 'Corrected 1' },
+      { hash: 'hash11', original: 'Original 11', corrected: 'Corrected 11' },
     ];
 
     const updatedSentences = setOldCorrectedText(sentences, oldSentences);
@@ -94,7 +94,7 @@ describe('setOldCorrectedText', () => {
       {
         hash: 'hash1',
         original: 'Original 1',
-        corrected: 'Corrected 1',
+        corrected: 'Corrected 11',
         underCorrection: true,
       },
     ]);

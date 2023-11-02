@@ -1,6 +1,6 @@
 import { Change, diffWords } from 'diff';
 import { DiffChanges, WordChange } from '../../../types/types';
-import { splitIntoSentences } from '../../utils/textUtils';
+import { splitIntoSentences } from '../../functions/textFunctions';
 
 const consolidateWordChanges = (wordChanges: WordChange[]): WordChange[] => {
   if (wordChanges.length === 0) {

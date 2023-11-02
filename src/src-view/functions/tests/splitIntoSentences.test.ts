@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { splitIntoSentences } from '../textUtils';
+import { splitIntoSentences } from '../textFunctions';
 
 describe('splitIntoSentences', () => {
   it('should split the input string into an array with special characters preserved', () => {

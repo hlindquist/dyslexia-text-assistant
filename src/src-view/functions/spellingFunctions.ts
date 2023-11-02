@@ -27,54 +27,18 @@ import {
   SentenceCacher,
   Spellchecker,
   SpellingSection,
-  TextAssistantState,
   WordChange,
 } from '../../types/types';
 import { Sentence, SentenceWithConversation } from '../../types/types';
-import hash from 'object-hash';
-import SentenceCache from '../actions/adapters/SentenceCache';
 import Differ from '../actions/adapters/Differ';
 import { transformTextToTokens } from './tokenUtils';
+import { setSentences, updateSentence } from '../redux/textAssistantSlice';
+import { splitIntoSentences, trimToCompleteSentences } from './textFunctions';
 import {
-  splitIntoSentences,
-  trimToCompleteSentences,
-} from '../utils/textUtils';
-import {
-  setSentences,
-  setText,
-  updateSentence,
-} from '../redux/textAssistantSlice';
-
-export const markNewSentences = (sentences: Sentence[]): Sentence[] =>
-  sentences.map((sentence) => {
-    return !sentence.corrected
-      ? {
-          ...sentence,
-          underCorrection: true,
-        }
-      : sentence;
-  });
-
-export const setOldCorrectedText = (
-  sentences: Sentence[],
-  oldSentences: Sentence[]
-): Sentence[] => {
-  return sentences.map((sentence: Sentence, index: number) => {
-    if (sentence.underCorrection) {
-      const oldCorrection =
-        findCorrectionByLeftSibling(index, sentences, oldSentences) ||
-        findCorrectionByRightSibling(index, sentences, oldSentences);
-      if (oldCorrection) {
-        return {
-          ...sentence,
-          corrected: oldCorrection,
-        };
-      }
-    }
-
-    return sentence;
-  });
-};
+  markNewSentences,
+  transformToSentenceObjects,
+  updateSentencesFromCache,
+} from './sentenceFunctions';
 
 const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
   sentences.map((sentence) =>
@@ -85,30 +49,30 @@ const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
 
 export const abstractCheckSpelling =
   (
-    state: TextAssistantState,
     spellchecker: Spellchecker,
     dispatcher: Dispatcher,
     logger: Logger,
     cache: SentenceCacher
   ) =>
-  (contentMessage: ContentMessage): Promise<Sentence | undefined>[] => {
+  (
+    contentMessage: ContentMessage,
+    storedSentences: Sentence[]
+  ): Promise<Sentence | undefined>[] => {
     const { apiKey, language, text } = contentMessage;
-    const oldSentences = state.sentences;
 
     const updatedSentences: Sentence[] = R.pipe(
       (text: string) => trimToCompleteSentences(text),
       (text: string) => splitIntoSentences(text),
       (sentences: string[]) => transformToSentenceObjects(sentences),
-      (sentences: Sentence[]) => updateSentencesFromCache(sentences)
+      (sentences: Sentence[]) => updateSentencesFromCache(sentences, cache),
+      (sentences: Sentence[]) => markNewSentences(sentences)
     )(text);
 
     const updatedWithTemporaryCorrections: Sentence[] = R.pipe(
-      (sentences: Sentence[]) => markNewSentences(sentences),
-      (sentences: Sentence[]) => setOldCorrectedText(sentences, oldSentences),
+      (sentences: Sentence[]) =>
+        setOldCorrectedText(sentences, storedSentences),
       (sentences: Sentence[]) => runAddTokensOnMarkedSentences(sentences)
     )(updatedSentences);
-
-    dispatcher.dispatch(setText(contentMessage.text));
 
     dispatcher.dispatch(setSentences(updatedWithTemporaryCorrections));
 
@@ -130,6 +94,7 @@ export const abstractCheckSpelling =
           const strippedSentence = {
             ...tokenized,
             conversationPrefix: undefined,
+            underCorrection: false,
           };
           cache.set(corrected.hash, strippedSentence);
           dispatcher.dispatch(updateSentence(strippedSentence));
@@ -181,18 +146,6 @@ export const createSection = (
   ranges: wordChanges,
 });
 
-export const transformToSentenceObjects = (sentences: string[]): Sentence[] =>
-  sentences.map((sentence) => ({
-    hash: hash(sentence, { algorithm: 'md5' }),
-    original: sentence,
-  }));
-
-export const updateSentencesFromCache = (sentences: Sentence[]): Sentence[] =>
-  sentences.map((sentence) => {
-    const cachedSentence = SentenceCache.get(sentence.hash);
-    return cachedSentence || sentence;
-  });
-
 export const getSentencesWithoutCorrection = (
   sentences: Sentence[]
 ): Sentence[] => sentences.filter((sentence) => !sentence.corrected);
@@ -232,25 +185,45 @@ export const amendConversationPrefixes = (
     amendConversationPrefix(sentence, sentences)
   );
 
-const findCorrectionByLeftSibling = (
-  index: number,
+export const setOldCorrectedText = (
   sentences: Sentence[],
   oldSentences: Sentence[]
-) => findCorrectionBySibling(index - 1, sentences, oldSentences);
-const findCorrectionByRightSibling = (
-  index: number,
-  sentences: Sentence[],
-  oldSentences: Sentence[]
-) => findCorrectionBySibling(index + 1, sentences, oldSentences);
+): Sentence[] =>
+  sentences.map((sentence: Sentence, index: number) => {
+    if (sentence.underCorrection) {
+      const oldCorrection =
+        findCorrectionByLeftSibling(index, sentences, oldSentences) ||
+        findCorrectionByRightSibling(index, sentences, oldSentences);
+      if (oldCorrection) {
+        return {
+          ...sentence,
+          corrected: oldCorrection,
+        };
+      }
+    }
+    return sentence;
+  });
 
-const findCorrectionBySibling = (
-  siblingIndex: number,
+export const findCorrectionByLeftSibling = (
+  index: number,
   sentences: Sentence[],
   oldSentences: Sentence[]
 ) => {
-  const leftSiblingHash = sentences[siblingIndex]?.hash;
+  const siblingHash = sentences[index - 1]?.hash;
   const selfSiblingCorrectionIndex = oldSentences.findIndex(
-    (s) => s.hash === leftSiblingHash
+    (sentence) => sentence.hash === siblingHash
   );
   return oldSentences[selfSiblingCorrectionIndex + 1]?.corrected;
+};
+
+export const findCorrectionByRightSibling = (
+  index: number,
+  sentences: Sentence[],
+  oldSentences: Sentence[]
+) => {
+  const siblingHash = sentences[index + 1]?.hash;
+  const selfSiblingCorrectionIndex = oldSentences.findIndex(
+    (sentence) => sentence.hash === siblingHash
+  );
+  return oldSentences[selfSiblingCorrectionIndex - 1]?.corrected;
 };
