@@ -22,8 +22,8 @@ import { EditorSection, Sentence, TextToken } from '../../types/types';
 import {
   identifyChangeTypesInText,
   transformTextsToTextTokens,
-} from '../utils/htmlTextUtil';
-import { splitFullSentences, splitText } from '../utils/textUtils';
+} from '../actions/utils/htmlTextUtil';
+import { splitFullSentences, splitText } from '../actions/utils/textUtils';
 
 export const findIndexOfSentence = (
   sentences: Sentence[],

@@ -20,7 +20,7 @@ import {
   Sentence,
   TextToken,
   WordChange,
-} from '../../types/types';
+} from '../../../types/types';
 import * as R from 'ramda';
 
 /* eslint-disable indent */

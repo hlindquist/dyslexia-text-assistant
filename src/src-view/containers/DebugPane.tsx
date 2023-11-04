@@ -24,7 +24,7 @@ const DebugPane = () => {
       <Resizable
         defaultSize={{
           width: '100%',
-          height: '50px',
+          height: '180px',
         }}
         enable={{
           top: true,
@@ -40,8 +40,8 @@ const DebugPane = () => {
       >
         <div className="debug-tools">
           <textarea
-            rows={5}
-            cols={40}
+            rows={10}
+            cols={120}
             value={text}
             onChange={handleChange}
           ></textarea>

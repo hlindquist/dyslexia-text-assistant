@@ -31,7 +31,7 @@ import {
 } from '../../types/types';
 import { Sentence, SentenceWithConversation } from '../../types/types';
 import Differ from '../actions/adapters/Differ';
-import { transformTextToTokens } from './tokenUtils';
+import { transformTextToTokens } from './tokenFunctions';
 import { setSentences, updateSentence } from '../redux/textAssistantSlice';
 import { splitIntoSentences, trimToCompleteSentences } from './textFunctions';
 import {

@@ -15,4 +15,18 @@
  * Author: Håkon Lindquist
  */
 
+import check from 'check-types';
+
 export const isDefined = (range: any): range is NonNullable<any> => !!range;
+
+export const checkApiKey = (apiKey: string): void => {
+  if (!check.nonEmptyString(apiKey)) {
+    throw new Error('Missing API key');
+  }
+};
+
+export const checkLanguage = (language: string): void => {
+  if (!check.nonEmptyString(language)) {
+    throw new Error('No language specified');
+  }
+};

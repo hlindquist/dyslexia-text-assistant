@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { TextToken } from '../../../types/types';
+import { TextToken } from '../../../../types/types';
 import { splitFullSentences } from '../textUtils';
 
 describe('splitFullSentences', () => {

@@ -19,49 +19,11 @@
 import check from 'check-types';
 
 import { CharPosition, ContentMessage } from '../../types/types';
-import {
-  addToDebugHistory,
-  setCharPosition,
-  setIncompleteSentence,
-  setText,
-} from '../redux/textAssistantSlice';
+import { setCharPosition } from '../redux/textAssistantSlice';
 import store from '../redux/store';
 import { debounce } from 'lodash';
-import {
-  getPositionIgnoringNewlines,
-  extractIncompleteSentence,
-} from '../utils/textUtils';
-import { checkSpelling } from './spellingService';
-import { getTimeInMilliseconds } from '../utils/timeTools';
-
-const handleContentMessage = async (contentMessage: ContentMessage) => {
-  const state = store.getState().textAssistant;
-  const hasApiKey = check.nonEmptyString(contentMessage.apiKey);
-  const hasLanguage = check.nonEmptyString(contentMessage.language);
-
-  if (!hasApiKey) {
-    console.error('Missing API key');
-    return;
-  }
-
-  if (!hasLanguage) {
-    console.error('No language specified');
-    return;
-  }
-
-  store.dispatch(setText(contentMessage.text));
-  store.dispatch(
-    addToDebugHistory({
-      time: getTimeInMilliseconds(),
-      text: contentMessage.text,
-    })
-  );
-
-  const incompleteSentence = extractIncompleteSentence(contentMessage.text);
-  store.dispatch(setIncompleteSentence(incompleteSentence));
-
-  await Promise.all(checkSpelling(contentMessage, state.sentences));
-};
+import { getPositionIgnoringNewlines } from './utils/textUtils';
+import SpellingService from './SpellingService';
 
 const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
@@ -70,7 +32,10 @@ const handleCharPosition = (charPosition: CharPosition) => {
   store.dispatch(setCharPosition(position));
 };
 
-const debouncedHandleContentMessage = debounce(handleContentMessage, 300);
+const debouncedHandleContentMessage = debounce(
+  SpellingService.handleContentMessage,
+  300
+);
 const debouncedHandleCharPosition = debounce(handleCharPosition, 200);
 
 window.addEventListener('message', (event) => {
