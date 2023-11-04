@@ -9,10 +9,10 @@ import {
   selectIncompleteSentence,
   selectSentences,
 } from '../redux/textAssistantSlice';
-import { scrollToTarget } from '../utils/browserTools';
-import { insertMissingTokens } from '../functions/tokenUtils';
-import { transformToHtmlSentences } from '../utils/htmlTextUtil';
-import { isScrollingEnabled } from '../utils/featureToggle';
+import { scrollToTarget } from '../actions/utils/browserTools';
+import { insertMissingTokens } from '../functions/tokenFunctions';
+import { transformToHtmlSentences } from '../actions/utils/htmlTextUtil';
+import { isScrollingEnabled } from '../../utils/featureToggle';
 
 const App: React.FC = () => {
   const charPosition = useSelector(selectCharPosition);

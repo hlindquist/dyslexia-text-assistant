@@ -24,7 +24,7 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
-import { isDebugModeEnabled } from './utils/featureToggle';
+import { isDebugModeEnabled } from '../utils/featureToggle';
 
 const root = createRoot(document.getElementById('root')!);
 root.render(

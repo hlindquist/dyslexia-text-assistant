@@ -17,7 +17,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { createTrimmedContentMessage } from '../textUtils';
-import { ContentMessage } from '../../../types/types';
+import { ContentMessage } from '../../../../types/types';
 
 describe('createTrimmedContentMessage', () => {
   it('should trim content to the last complete sentence', () => {

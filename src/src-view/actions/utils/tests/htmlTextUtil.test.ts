@@ -17,7 +17,7 @@
 
 import { describe, it, expect } from '@jest/globals';
 import { transformTokensToHtml } from '../htmlTextUtil'; // Import the new function
-import { TextToken } from '../../../types/types';
+import { TextToken } from '../../../../types/types';
 
 describe('transformTokensToHtml', () => {
   it('should surround added words with span tags', () => {

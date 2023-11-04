@@ -5,10 +5,10 @@ import {
   EditorSection,
   TextToken,
   WordChange,
-} from '../../types/types';
+} from '../../../types/types';
 
 import check from 'check-types';
-import { trimToCompleteSentences } from '../functions/textFunctions';
+import { trimToCompleteSentences } from '../../functions/textFunctions';
 
 export const endsWithStopWord = (inputString: string): boolean => {
   const stopWords = ['.', '?', '!'];

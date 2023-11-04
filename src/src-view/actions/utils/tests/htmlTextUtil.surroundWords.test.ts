@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { TextToken, WordChange } from '../../../types/types';
+import { TextToken, WordChange } from '../../../../types/types';
 import { surroundWordsWithSpan } from '../htmlTextUtil';
 
 describe('surroundWordsWithSpan', () => {
