@@ -72,6 +72,7 @@ export interface Sentence {
   corrected?: string;
   originalTokens?: TextToken[];
   correctedTokens?: TextToken[];
+  needsCorrection?: boolean;
   underCorrection?: boolean;
 }
 
@@ -80,7 +81,7 @@ export interface HtmlSentence {
   original: string;
   originalHtml: string | undefined;
   correctedHtml: string | undefined;
-  underCorrection?: boolean;
+  needsCorrection?: boolean;
 }
 
 export interface SentenceWithConversation extends Sentence {
@@ -108,7 +109,7 @@ export interface ContentMessage {
   apiKey: string;
 }
 
-interface ChangeHistory {
+export interface ChangeHistory {
   time: string;
   text: string;
   charPosition: CharPosition;
@@ -116,15 +117,20 @@ interface ChangeHistory {
 
 export interface TextAssistantState {
   text: string | undefined;
+  chatConfiguration: ChatConfiguration;
   charPosition: number | undefined;
   sentences: Sentence[];
+  sentencesNeedingCorrection: Sentence[];
   incompleteSentence: string;
   debug: ChangeHistory[];
 }
 
-export interface CorrectionParams {
+export interface ChatConfiguration {
   apiKey: string;
-  language: string;
+  language: Language;
+}
+
+export interface CorrectionParams extends ChatConfiguration {
   sentence: SentenceWithConversation;
 }
 

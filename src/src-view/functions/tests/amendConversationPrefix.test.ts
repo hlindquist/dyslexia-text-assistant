@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { amendConversationPrefix } from '../spellingFunctions';
 
 const createSentences = (length: number) => {
@@ -87,5 +87,16 @@ describe('amendConversationPrefix', () => {
     const result = amendConversationPrefix(sentenceToPrefix, manySentences);
 
     expect(result.conversationPrefix.length).toBe(10);
+  });
+
+  it.skip('should handle when no sentences', () => {
+    const sentenceToPrefix = {
+      hash: 'hash3',
+      original: 'Original sentence 3',
+    };
+
+    const result = amendConversationPrefix(sentenceToPrefix, []);
+
+    expect(result.conversationPrefix).toEqual([]);
   });
 });

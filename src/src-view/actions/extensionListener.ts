@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -20,10 +19,10 @@ import check from 'check-types';
 
 import { debounce } from 'lodash';
 import { CharPosition, ContentMessage } from '../../types/types';
+import { getPositionIgnoringNewlines } from '../functions/textFunctions';
 import store from '../redux/store';
 import { setCharPosition } from '../redux/textAssistantSlice';
-import SpellingService from './SpellingService';
-import { getPositionIgnoringNewlines } from '../functions/textFunctions';
+import { handleContentMessage } from './contentMessageService';
 
 const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
@@ -32,10 +31,7 @@ const handleCharPosition = (charPosition: CharPosition) => {
   store.dispatch(setCharPosition(position));
 };
 
-const debouncedHandleContentMessage = debounce(
-  SpellingService.handleContentMessage,
-  300
-);
+const debouncedHandleContentMessage = debounce(handleContentMessage, 200);
 const debouncedHandleCharPosition = debounce(handleCharPosition, 200);
 
 window.addEventListener('message', (event) => {
