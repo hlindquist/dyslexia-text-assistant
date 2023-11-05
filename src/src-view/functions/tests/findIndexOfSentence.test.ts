@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { Sentence } from '../../../types/types';
 import { findIndexOfSentence } from '../tokenFunctions';
 

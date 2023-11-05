@@ -15,8 +15,8 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
-import { extractIncompleteSentence } from '../textUtils';
+import { describe, expect, it } from '@jest/globals';
+import { extractIncompleteSentence } from '../textFunctions';
 
 describe('handleIncompleteSentencePart', () => {
   it('should return an empty string for an empty input', () => {

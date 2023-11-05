@@ -4,15 +4,15 @@ import './App.scss';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
+import { isScrollingEnabled } from '../../utils/featureToggle';
+import { scrollToTarget } from '../actions/utils/browserUtils';
+import { insertMissingTokens } from '../functions/tokenFunctions';
 import {
   selectCharPosition,
   selectIncompleteSentence,
   selectSentences,
 } from '../redux/textAssistantSlice';
-import { scrollToTarget } from '../actions/utils/browserTools';
-import { insertMissingTokens } from '../functions/tokenFunctions';
-import { transformToHtmlSentences } from '../actions/utils/htmlTextUtil';
-import { isScrollingEnabled } from '../../utils/featureToggle';
+import { transformToHtmlSentences } from '../functions/htmlTextFunctions';
 
 const App: React.FC = () => {
   const charPosition = useSelector(selectCharPosition);

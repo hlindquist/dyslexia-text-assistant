@@ -15,8 +15,8 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
-import { getPositionIgnoringNewlines } from '../textUtils';
+import { describe, expect, it } from '@jest/globals';
+import { getPositionIgnoringNewlines } from '../textFunctions';
 
 describe('getPositionIgnoringNewlines', () => {
   it('should calculate position correctly for a character within a line', () => {

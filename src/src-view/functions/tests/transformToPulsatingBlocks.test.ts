@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { transformToPulsatingBlocks } from '../htmlTextUtil';
+import { transformToPulsatingBlocks } from '../htmlTextFunctions';
 
 describe('transformToPulsatingBlocks', () => {
   it('should transform non-space characters to pulsating blocks', () => {

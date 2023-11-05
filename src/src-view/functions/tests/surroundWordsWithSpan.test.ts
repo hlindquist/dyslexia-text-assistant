@@ -16,8 +16,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { TextToken, WordChange } from '../../../../types/types';
-import { surroundWordsWithSpan } from '../htmlTextUtil';
+import { TextToken, WordChange } from '../../../types/types';
+import { surroundWordsWithSpan } from '../htmlTextFunctions';
 
 describe('surroundWordsWithSpan', () => {
   it('should surround words with <span> tags when changes are "added" or "removed"', () => {
