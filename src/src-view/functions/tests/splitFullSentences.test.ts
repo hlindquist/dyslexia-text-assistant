@@ -15,9 +15,9 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
-import { TextToken } from '../../../../types/types';
-import { splitFullSentences } from '../textUtils';
+import { describe, expect, it } from '@jest/globals';
+import { TextToken } from '../../../types/types';
+import { splitFullSentences } from '../textFunctions';
 
 describe('splitFullSentences', () => {
   it('should split tokens with periods in the middle of the texts', () => {

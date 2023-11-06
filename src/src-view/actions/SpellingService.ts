@@ -16,16 +16,16 @@
  * Author: Håkon Lindquist
  */
 
+import { checkApiKey, checkLanguage } from '../../utils/generalUtils';
+import { extractIncompleteSentence } from '../functions/textFunctions';
 import store from '../redux/store';
 import {
   addToDebugHistory,
   setIncompleteSentence,
   setText,
 } from '../redux/textAssistantSlice';
-import { getTimeInMilliseconds } from './utils/timeTools';
-import { extractIncompleteSentence } from './utils/textUtils';
-import { checkApiKey, checkLanguage } from '../../utils/generalUtils';
 import { checkSpelling } from './utils/spellingUtils';
+import { getTimeInMilliseconds } from './utils/timeUtils';
 
 class SpellingService {
   static handleContentMessage = async (contentMessage) => {

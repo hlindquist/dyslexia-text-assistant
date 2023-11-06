@@ -18,12 +18,12 @@
 
 import check from 'check-types';
 
-import { CharPosition, ContentMessage } from '../../types/types';
-import { setCharPosition } from '../redux/textAssistantSlice';
-import store from '../redux/store';
 import { debounce } from 'lodash';
-import { getPositionIgnoringNewlines } from './utils/textUtils';
+import { CharPosition, ContentMessage } from '../../types/types';
+import store from '../redux/store';
+import { setCharPosition } from '../redux/textAssistantSlice';
 import SpellingService from './SpellingService';
+import { getPositionIgnoringNewlines } from '../functions/textFunctions';
 
 const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
