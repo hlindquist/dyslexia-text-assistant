@@ -18,7 +18,11 @@
 import check from 'check-types';
 
 import { debounce } from 'lodash';
-import { CharPosition, ContentMessage } from '../../types/types';
+import {
+  CharPosition,
+  CharPositionSimple,
+  ContentMessage,
+} from '../../types/types';
 import { getPositionIgnoringNewlines } from '../functions/textFunctions';
 import store from '../redux/store';
 import { setCharPosition } from '../redux/textAssistantSlice';
@@ -26,13 +30,21 @@ import { handleContentMessage } from './contentMessageService';
 
 const handleCharPosition = (charPosition: CharPosition) => {
   const state = store.getState().textAssistant;
-  const position = getPositionIgnoringNewlines(charPosition, state.text);
+  const simplePosition = getPositionIgnoringNewlines(charPosition, state.text);
 
-  store.dispatch(setCharPosition(position));
+  handleCharPositionSimple(simplePosition);
+};
+
+const handleCharPositionSimple = (charPosition: CharPositionSimple) => {
+  store.dispatch(setCharPosition(charPosition));
 };
 
 const debouncedHandleContentMessage = debounce(handleContentMessage, 200);
-const debouncedHandleCharPosition = debounce(handleCharPosition, 200);
+const debouncedHandleCharPosition = debounce(handleCharPosition, 100);
+const debouncedHandleCharPositionSimple = debounce(
+  handleCharPositionSimple,
+  100
+);
 
 window.addEventListener('message', (event) => {
   if (check.object(event?.data?.contentMessage)) {
@@ -44,4 +56,8 @@ window.addEventListener('message', (event) => {
 
 export const debugContentMessage = (message: ContentMessage) => {
   debouncedHandleContentMessage(message);
+};
+
+export const debugCharPosition = (charPosition: CharPositionSimple) => {
+  debouncedHandleCharPositionSimple(charPosition);
 };

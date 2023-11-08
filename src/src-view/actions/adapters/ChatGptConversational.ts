@@ -40,7 +40,7 @@ const createPrompt = (
   language: string,
   conversationPrefix: Conversation[]
 ) => ({
-  model: 'gpt-3.5-turbo',
+  model: 'gpt-3.5-turbo-1106',
   messages: [
     {
       role: 'system',

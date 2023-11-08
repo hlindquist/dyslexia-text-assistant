@@ -16,6 +16,7 @@
  */
 
 export type ChangeType = 'skipped' | 'added' | 'removed';
+export type CharPositionSimple = number;
 
 export interface WordChange {
   word: string;

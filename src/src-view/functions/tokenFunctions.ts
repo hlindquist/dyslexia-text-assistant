@@ -23,7 +23,7 @@ import {
   identifyChangeTypesInText,
   transformTextsToTextTokens,
 } from './htmlTextFunctions';
-import { splitText, splitFullSentences } from './textFunctions';
+import { splitFullSentences, splitText } from './textFunctions';
 
 export const findIndexOfSentence = (
   sentences: Sentence[],
@@ -53,16 +53,10 @@ const currentPositionSentence = {
   correctedTokens: [{ original: '', type: 'current' }],
 } as Sentence;
 
-const insertSkipTokens = (sentences: Sentence[]): Sentence[] => sentences;
-
 export const insertMissingTokens = (
   sentences: Sentence[],
   position: number
-): Sentence[] =>
-  R.pipe(
-    (sentences: Sentence[]) => insertPositionToken(position, sentences),
-    (sentences: Sentence[]) => insertSkipTokens(sentences)
-  )(sentences);
+): Sentence[] => insertPositionToken(position, sentences);
 
 const insertPositionSentence = (sentences: Sentence[], indexToInsert: number) =>
   sentences

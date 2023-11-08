@@ -1,10 +1,9 @@
 import * as React from 'react';
 import './App.scss';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import { isScrollingEnabled } from '../../utils/featureToggle';
 import { scrollToTarget } from '../actions/utils/browserUtils';
 import { transformToHtmlSentences } from '../functions/htmlTextFunctions';
 import { insertMissingTokens } from '../functions/tokenFunctions';
@@ -19,26 +18,39 @@ const App: React.FC = () => {
   const sentences = useSelector(selectSentences);
   const incompleteSentence = useSelector(selectIncompleteSentence);
 
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  const maxRows = [Math.floor((windowHeight - 20 * 4) / (16 * 1.25 * 2))].map(
+    (max) => (max < 4 ? 4 : max)
+  )[0];
+
+  const updateWindowHeight = () => {
+    setWindowHeight(window.innerHeight);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateWindowHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateWindowHeight);
+    };
+  }, []);
+
   const scrollToCurrentPosition = () => {
     scrollToTarget('.original', '.currentPosition');
     scrollToTarget('.corrected', '.currentPosition');
   };
 
   useEffect(() => {
-    if (isScrollingEnabled()) {
-      scrollToCurrentPosition();
-    }
+    scrollToCurrentPosition();
   }, [charPosition]);
 
   useEffect(() => {
-    if (isScrollingEnabled()) {
-      window.addEventListener('resize', scrollToCurrentPosition);
+    window.addEventListener('resize', scrollToCurrentPosition);
 
-      return () => {
-        window.removeEventListener('resize', scrollToCurrentPosition);
-      };
-    }
-    return undefined;
+    return () => {
+      window.removeEventListener('resize', scrollToCurrentPosition);
+    };
   }, []);
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -57,7 +69,7 @@ const App: React.FC = () => {
   return (
     <div>
       <div className="originalWrapper">
-        <div>
+        <div className="original" style={{ maxHeight: 1.25 * maxRows + 'rem' }}>
           {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'original'}>
               {sentence.needsCorrection && (
@@ -81,7 +93,10 @@ const App: React.FC = () => {
         </div>
       </div>
       <div className="correctedWrapper">
-        <div>
+        <div
+          className="corrected"
+          style={{ maxHeight: 1.25 * maxRows + 'rem' }}
+        >
           {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'corrected'}>
               {sentence.needsCorrection && (
