@@ -1,10 +1,11 @@
-import { findLastIndex, escapeRegExp } from 'lodash';
 import check from 'check-types';
+import { escapeRegExp, findLastIndex } from 'lodash';
 
 import {
   CharPosition,
   ContentMessage,
   EditorSection,
+  RegexExtract,
   TextToken,
   WordChange,
 } from '../../types/types';
@@ -131,7 +132,7 @@ export const splitIntoSentences = (inputString: string): string[] => {
       currentSentence += char;
 
       if (currentSentence) {
-        result.push(currentSentence.trim());
+        result.push(currentSentence);
         currentSentence = '';
       }
     } else {
@@ -140,8 +141,20 @@ export const splitIntoSentences = (inputString: string): string[] => {
   }
 
   if (currentSentence) {
-    result.push(currentSentence.trim());
+    result.push(currentSentence);
   }
 
   return result;
 };
+
+export const extractWithRegex = (text: string, regex: RegExp): RegexExtract => {
+  const matched = text.match(regex)?.[0] || '';
+  const remainingText = text.replace(regex, '');
+
+  return { matched, text: remainingText };
+};
+
+export const extractNoncorrectablesFromFront = (text: string): RegexExtract =>
+  extractWithRegex(text, /^(\\n|\\r|\s|")+/);
+export const extractNoncorrectablesFromEnd = (text: string): RegexExtract =>
+  extractWithRegex(text, /(\\n|\\r|\s|")+$/);

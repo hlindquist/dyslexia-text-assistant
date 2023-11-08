@@ -22,6 +22,10 @@ import {
   Sentence,
   Spellchecker,
 } from '../../../types/types';
+import {
+  extractNoncorrectablesFromEnd,
+  extractNoncorrectablesFromFront,
+} from '../../functions/textFunctions';
 import Ajax from './Ajax';
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
@@ -42,10 +46,12 @@ const createPrompt = (
       role: 'system',
       content: `
 You are correcting spelling mistakes in all the texts I send you.
-Add a period to lines of texts that have a newline, but not a period at the end.
-You are conservative when correcting.
 You do not delete repeated words or sentences.
-You keep lines without period, but with newline, inside the corrected text.
+You preserve all newlines.
+You preserve all breaklines.
+You only use common words.
+You correct all case errors.
+You preserve any special characters.
 The texts I send you are in ${language}.`,
     },
     ...conversationPrefix,
@@ -81,9 +87,18 @@ class ChatGPTConversational implements Spellchecker {
     const conversationPrompt = createConversationPart(
       sentence.conversationPrefix
     );
+
+    const extractedFromFront = extractNoncorrectablesFromFront(
+      sentence.original
+    );
+    const extractedFromEnd = extractNoncorrectablesFromEnd(
+      extractedFromFront.text
+    );
+    const strippedSentence = extractedFromEnd.text;
+
     const request = {
       url: API_URL,
-      body: createPrompt(sentence.original, language, conversationPrompt),
+      body: createPrompt(strippedSentence, language, conversationPrompt),
       headers: createHeaders(apiKey),
     };
 
@@ -92,9 +107,11 @@ class ChatGPTConversational implements Spellchecker {
         const responseData = response.data;
 
         if (response.ok && responseData.choices[0]?.message?.content) {
+          const responseText = responseData.choices[0].message.content;
+          const reassembledSentence = `${extractedFromFront.matched}${responseText}${extractedFromEnd.matched}`;
           const correctedSentence: Sentence = {
             ...sentence,
-            corrected: responseData.choices[0].message.content,
+            corrected: reassembledSentence,
           };
           return [undefined, correctedSentence] as [undefined, Sentence];
         } else {

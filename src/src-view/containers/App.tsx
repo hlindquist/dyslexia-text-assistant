@@ -58,9 +58,8 @@ const App: React.FC = () => {
     <div>
       <div className="originalWrapper">
         <div>
-          {htmlSentences.map((sentence, index) => (
+          {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'original'}>
-              {index > 0 && <span> </span>}
               {sentence.needsCorrection && (
                 <span className="underCorrection"> </span>
               )}
@@ -83,9 +82,8 @@ const App: React.FC = () => {
       </div>
       <div className="correctedWrapper">
         <div>
-          {htmlSentences.map((sentence, index) => (
+          {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'corrected'}>
-              {index > 0 && <span> </span>}
               {sentence.needsCorrection && (
                 <span className="underCorrection"> </span>
               )}

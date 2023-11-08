@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { splitIntoSentences } from '../textFunctions';
 
 describe('splitIntoSentences', () => {
@@ -44,8 +44,8 @@ describe('splitIntoSentences', () => {
     const expectedOutput = [
       'This is the first sentence.',
       // eslint-disable-next-line quotes
-      "Here's the second one!",
-      'And, finally, the third?',
+      " Here's the second one!",
+      ' And, finally, the third?',
     ];
 
     const result = splitIntoSentences(inputString);
