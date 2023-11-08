@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,22 +16,6 @@
  * Author: Håkon Lindquist
  */
 
-import * as React from 'react';
-import { createRoot } from 'react-dom/client';
+import { handleNewCorrections } from './spellingService';
 
-import { Provider } from 'react-redux';
-import { isDebugModeEnabled } from '../utils/featureToggle';
-import './actions/extensionListener';
-import './actions/reduxListener';
-import App from './containers/App';
-import DebugPane from './containers/DebugPane';
-import './index.scss';
-import store from './redux/store';
-
-const root = createRoot(document.getElementById('root')!);
-root.render(
-  <Provider store={store}>
-    <App />
-    {isDebugModeEnabled() ? <DebugPane /> : null}
-  </Provider>
-);
+setInterval(handleNewCorrections, 135);

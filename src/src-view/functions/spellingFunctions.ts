@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /*
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -16,96 +15,23 @@
  * Author: Håkon Lindquist
  */
 
-import * as R from 'ramda';
-
 import {
-  ContentMessage,
   DiffChanges,
-  Dispatcher,
   EditorSection,
-  Logger,
-  SentenceCacher,
-  Spellchecker,
+  Sentence,
+  SentenceWithConversation,
   SpellingSection,
   WordChange,
 } from '../../types/types';
-import { Sentence, SentenceWithConversation } from '../../types/types';
 import Differ from '../actions/adapters/Differ';
 import { transformTextToTokens } from './tokenFunctions';
-import { setSentences, updateSentence } from '../redux/textAssistantSlice';
-import { splitIntoSentences, trimToCompleteSentences } from './textFunctions';
-import {
-  markNewSentences,
-  transformToSentenceObjects,
-  updateSentencesFromCache,
-} from './sentenceFunctions';
 
-const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
+export const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
   sentences.map((sentence) =>
-    sentence.corrected && sentence.underCorrection
+    sentence.corrected && sentence.needsCorrection
       ? addTokens(sentence)
       : sentence
   );
-
-export const abstractCheckSpelling =
-  (
-    spellchecker: Spellchecker,
-    dispatcher: Dispatcher,
-    logger: Logger,
-    cache: SentenceCacher
-  ) =>
-  (
-    contentMessage: ContentMessage,
-    storedSentences: Sentence[]
-  ): Promise<Sentence | undefined>[] => {
-    const { apiKey, language, text } = contentMessage;
-
-    const updatedSentences: Sentence[] = R.pipe(
-      (text: string) => trimToCompleteSentences(text),
-      (text: string) => splitIntoSentences(text),
-      (sentences: string[]) => transformToSentenceObjects(sentences),
-      (sentences: Sentence[]) => updateSentencesFromCache(sentences, cache),
-      (sentences: Sentence[]) => markNewSentences(sentences)
-    )(text);
-
-    const updatedWithTemporaryCorrections: Sentence[] = R.pipe(
-      (sentences: Sentence[]) =>
-        setOldCorrectedText(sentences, storedSentences),
-      (sentences: Sentence[]) => runAddTokensOnMarkedSentences(sentences)
-    )(updatedSentences);
-
-    dispatcher.dispatch(setSentences(updatedWithTemporaryCorrections));
-
-    const sentencesWithConversation: SentenceWithConversation[] = R.pipe(
-      (sentences: Sentence[]) => getSentencesWithoutCorrection(sentences),
-      (sentencesWithoutCorrection: Sentence[]) =>
-        amendConversationPrefixes(sentencesWithoutCorrection, updatedSentences)
-    )(updatedSentences);
-
-    return sentencesWithConversation.map(
-      async (sentence: SentenceWithConversation) => {
-        const [error, corrected] = await spellchecker.correct({
-          sentence,
-          apiKey,
-          language,
-        });
-        if (corrected) {
-          const tokenized = addTokens(corrected);
-          const strippedSentence = {
-            ...tokenized,
-            conversationPrefix: undefined,
-            underCorrection: false,
-          };
-          cache.set(corrected.hash, strippedSentence);
-          dispatcher.dispatch(updateSentence(strippedSentence));
-          return corrected;
-        } else if (error) {
-          logger.log('Failed to correct sentence', error);
-        }
-        return undefined;
-      }
-    );
-  };
 
 export const addTokens = (sentence: Sentence): Sentence => {
   const diffChanges = Differ.compare(
@@ -185,12 +111,21 @@ export const amendConversationPrefixes = (
     amendConversationPrefix(sentence, sentences)
   );
 
+export const matchWithCurrentSentences = (
+  sentences: Sentence[],
+  currentSentences: Sentence[]
+): Sentence[] =>
+  sentences.map(
+    (sentence) =>
+      currentSentences.find((s) => s.hash === sentence.hash) || sentence
+  );
+
 export const setOldCorrectedText = (
   sentences: Sentence[],
   oldSentences: Sentence[]
 ): Sentence[] =>
   sentences.map((sentence: Sentence, index: number) => {
-    if (sentence.underCorrection) {
+    if (sentence.needsCorrection) {
       const oldCorrection =
         findCorrectionByLeftSibling(index, sentences, oldSentences) ||
         findCorrectionByRightSibling(index, sentences, oldSentences);

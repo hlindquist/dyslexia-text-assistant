@@ -18,16 +18,16 @@
 import axios, { AxiosResponse } from 'axios';
 import { AjaxResponse, RestRequest } from '../../../types/types';
 
-function transformAxiosResponse<T>(
+const transformAxiosResponse = <T>(
   axiosResponse: AxiosResponse<T>
-): AjaxResponse<T> {
+): AjaxResponse<T> => {
   return {
     data: axiosResponse.data,
     ok: axiosResponse.status >= 200 && axiosResponse.status < 300,
     httpCode: axiosResponse.status,
     statusText: axiosResponse.statusText,
   };
-}
+};
 
 class Ajax {
   static post = async <T>(request: RestRequest): Promise<AjaxResponse<T>> =>

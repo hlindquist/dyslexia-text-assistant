@@ -6,13 +6,13 @@ import { useSelector } from 'react-redux';
 
 import { isScrollingEnabled } from '../../utils/featureToggle';
 import { scrollToTarget } from '../actions/utils/browserUtils';
+import { transformToHtmlSentences } from '../functions/htmlTextFunctions';
 import { insertMissingTokens } from '../functions/tokenFunctions';
 import {
   selectCharPosition,
   selectIncompleteSentence,
   selectSentences,
 } from '../redux/textAssistantSlice';
-import { transformToHtmlSentences } from '../functions/htmlTextFunctions';
 
 const App: React.FC = () => {
   const charPosition = useSelector(selectCharPosition);
@@ -61,7 +61,7 @@ const App: React.FC = () => {
           {htmlSentences.map((sentence, index) => (
             <span key={sentence.hash + 'original'}>
               {index > 0 && <span> </span>}
-              {sentence.underCorrection && (
+              {sentence.needsCorrection && (
                 <span className="underCorrection"> </span>
               )}
               <span
@@ -86,7 +86,7 @@ const App: React.FC = () => {
           {htmlSentences.map((sentence, index) => (
             <span key={sentence.hash + 'corrected'}>
               {index > 0 && <span> </span>}
-              {sentence.underCorrection && (
+              {sentence.needsCorrection && (
                 <span className="underCorrection"> </span>
               )}
               <span

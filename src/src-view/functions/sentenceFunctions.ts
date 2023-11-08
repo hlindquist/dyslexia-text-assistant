@@ -17,12 +17,17 @@ export const updateSentencesFromCache = (
     return cachedSentence || sentence;
   });
 
-export const markNewSentences = (sentences: Sentence[]): Sentence[] =>
+export const markUncorrectedForCorrection = (
+  sentences: Sentence[]
+): Sentence[] =>
   sentences.map((sentence) => {
     return !sentence.corrected
       ? {
           ...sentence,
-          underCorrection: true,
+          needsCorrection: true,
         }
       : sentence;
   });
+
+export const findNeedsCorrection = (sentences: Sentence[]) =>
+  sentences.filter((sentence: Sentence) => sentence.needsCorrection);

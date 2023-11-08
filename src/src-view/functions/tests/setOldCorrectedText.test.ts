@@ -16,14 +16,14 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { Sentence } from '../../../types/types';
 import { setOldCorrectedText } from '../spellingFunctions';
 
 describe('setOldCorrectedText', () => {
   it('should set old corrected text on first element based on siblings', () => {
     const sentences: Sentence[] = [
-      { hash: 'hash11', original: 'Original 11', underCorrection: true },
+      { hash: 'hash11', original: 'Original 11', needsCorrection: true },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
       { hash: 'hash3', original: 'Original 3', corrected: 'Corrected 3' },
     ];
@@ -41,7 +41,7 @@ describe('setOldCorrectedText', () => {
         hash: 'hash11',
         original: 'Original 11',
         corrected: 'Corrected 1',
-        underCorrection: true,
+        needsCorrection: true,
       },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
       { hash: 'hash3', original: 'Original 3', corrected: 'Corrected 3' },
@@ -52,7 +52,7 @@ describe('setOldCorrectedText', () => {
     const sentences: Sentence[] = [
       { hash: 'hash1', original: 'Original 1', corrected: 'Corrected 1' },
       { hash: 'hash2', original: 'Original 2', corrected: 'Corrected 2' },
-      { hash: 'hash33', original: 'Original 33', underCorrection: true },
+      { hash: 'hash33', original: 'Original 33', needsCorrection: true },
     ];
 
     const oldSentences: Sentence[] = [
@@ -74,14 +74,14 @@ describe('setOldCorrectedText', () => {
         hash: 'hash33',
         original: 'Original 33',
         corrected: 'Corrected 3',
-        underCorrection: true,
+        needsCorrection: true,
       },
     ]);
   });
 
   it('should set old corrected text from only element', () => {
     const sentences: Sentence[] = [
-      { hash: 'hash1', original: 'Original 1', underCorrection: true },
+      { hash: 'hash1', original: 'Original 1', needsCorrection: true },
     ];
 
     const oldSentences: Sentence[] = [
@@ -95,14 +95,14 @@ describe('setOldCorrectedText', () => {
         hash: 'hash1',
         original: 'Original 1',
         corrected: 'Corrected 11',
-        underCorrection: true,
+        needsCorrection: true,
       },
     ]);
   });
 
   it('should not set corrected text when no match', () => {
     const sentences: Sentence[] = [
-      { hash: 'hash1', original: 'Original 1', underCorrection: true },
+      { hash: 'hash1', original: 'Original 1', needsCorrection: true },
     ];
 
     const oldSentences: Sentence[] = [];
@@ -113,7 +113,7 @@ describe('setOldCorrectedText', () => {
       {
         hash: 'hash1',
         original: 'Original 1',
-        underCorrection: true,
+        needsCorrection: true,
       },
     ]);
   });
