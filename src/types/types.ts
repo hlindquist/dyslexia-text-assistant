@@ -16,6 +16,7 @@
  */
 
 export type ChangeType = 'skipped' | 'added' | 'removed';
+export type CharPositionSimple = number;
 
 export interface WordChange {
   word: string;
@@ -151,4 +152,11 @@ export interface Spellchecker {
 export interface SentenceCacher {
   get: (hash: string) => Sentence | undefined;
   set: (hash: string, sentence: Sentence) => void;
+}
+
+export interface TextAssitantStore {}
+
+export interface RegexExtract {
+  matched: string;
+  text: string;
 }

@@ -15,7 +15,7 @@
  * Author: Håkon Lindquist
  */
 
-import { describe, it, expect } from '@jest/globals';
+import { describe, expect, it } from '@jest/globals';
 import { Sentence } from '../../../types/types';
 import { insertPositionToken } from '../tokenFunctions';
 
@@ -103,7 +103,7 @@ describe('insertPositionToken', () => {
       },
     ] as Sentence[];
 
-    const newPosition = 30;
+    const newPosition = 70;
 
     const result = insertPositionToken(newPosition, sentences);
 

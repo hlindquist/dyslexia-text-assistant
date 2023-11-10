@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
 import { Resizable } from 're-resizable';
+import React, { useState } from 'react';
+import {
+  debugCharPosition,
+  debugContentMessage,
+} from '../actions/extensionListener';
 import './DebugPane.css';
-import { debugContentMessage } from '../actions/extensionListener';
 
 declare const OPENAI_TEST_KEY: string;
 
@@ -19,6 +22,12 @@ const DebugPane = () => {
     setText(newText);
   };
 
+  const handleKeyUp = (event) => {
+    const selectionStart = event.target.selectionStart;
+
+    debugCharPosition(selectionStart);
+  };
+
   return (
     <div>
       <Resizable
@@ -28,7 +37,7 @@ const DebugPane = () => {
         }}
         enable={{
           top: true,
-          right: false,
+          right: true,
           bottom: false,
           left: false,
           topRight: false,
@@ -36,14 +45,15 @@ const DebugPane = () => {
           bottomLeft: false,
           topLeft: false,
         }}
-        style={{ position: 'absolute', bottom: '0', border: '1px solid black' }}
+        style={{ position: 'absolute', bottom: '0' }}
       >
         <div className="debug-tools">
           <textarea
             rows={10}
-            cols={120}
+            cols={60}
             value={text}
             onChange={handleChange}
+            onKeyUp={handleKeyUp}
           ></textarea>
         </div>
       </Resizable>
