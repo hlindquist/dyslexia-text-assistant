@@ -20,9 +20,11 @@ const App: React.FC = () => {
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  const maxRows = [Math.floor((windowHeight - 20 * 4) / (16 * 1.25 * 2))].map(
-    (max) => (max < 4 ? 4 : max)
-  )[0];
+  const zoomLevel = window.devicePixelRatio;
+
+  const maxRows = [
+    Math.floor((windowHeight - 20 * 4) / (16 * 1.25 * 2 * zoomLevel)),
+  ].map((max) => (max < 4 ? 4 : max))[0];
 
   const updateWindowHeight = () => {
     setWindowHeight(window.innerHeight);
