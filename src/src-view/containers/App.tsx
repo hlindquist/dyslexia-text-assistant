@@ -20,11 +20,12 @@ const App: React.FC = () => {
 
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  const zoomLevel = window.devicePixelRatio;
-
-  const maxRows = [
-    Math.floor((windowHeight - 20 * 4) / (16 * 1.25 * 2 * zoomLevel)),
-  ].map((max) => (max < 4 ? 4 : max))[0];
+  const textareaHeight = (windowHeight - 16 * 4) / 2;
+  const lineHeightMultiplier = 0.25 / 2 + 1;
+  const rowHeight = 16 * lineHeightMultiplier;
+  const maxRows = [Math.floor(textareaHeight / rowHeight)].map((max) =>
+    max < 4 ? 4 : max
+  )[0];
 
   const updateWindowHeight = () => {
     setWindowHeight(window.innerHeight);
@@ -68,10 +69,18 @@ const App: React.FC = () => {
 
   const shouldShowIncompleteSentence = () => incompleteSentence.trim() !== '';
 
+  const maxHeightInRem =
+    lineHeightMultiplier * maxRows - (lineHeightMultiplier - 1) + 'rem';
+
   return (
     <div>
       <div className="originalWrapper">
-        <div className="original" style={{ maxHeight: 1.25 * maxRows + 'rem' }}>
+        <div
+          className="original"
+          style={{
+            maxHeight: maxHeightInRem,
+          }}
+        >
           {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'original'}>
               {sentence.needsCorrection && (
@@ -97,7 +106,9 @@ const App: React.FC = () => {
       <div className="correctedWrapper">
         <div
           className="corrected"
-          style={{ maxHeight: 1.25 * maxRows + 'rem' }}
+          style={{
+            maxHeight: maxHeightInRem,
+          }}
         >
           {htmlSentences.map((sentence) => (
             <span key={sentence.hash + 'corrected'}>
