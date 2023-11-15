@@ -49,7 +49,7 @@ export interface ChatResponse {
 
 export interface EditorSection {
   text: string;
-  ranges: WordChange[];
+  changes: WordChange[];
 }
 
 export interface SpellingSection {

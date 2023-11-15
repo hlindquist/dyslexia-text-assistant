@@ -18,12 +18,17 @@
 
 import * as R from 'ramda';
 
-import { EditorSection, Sentence, TextToken } from '../../types/types';
 import {
-  identifyChangeTypesInText,
-  transformTextsToTextTokens,
-} from './htmlTextFunctions';
-import { splitFullSentences, splitText } from './textFunctions';
+  EditorSection,
+  Sentence,
+  TextToken,
+  WordChange,
+} from '../../types/types';
+import {
+  findTokensToSplitOn,
+  splitFullSentences,
+  splitText,
+} from './textFunctions';
 
 export const findIndexOfSentence = (
   sentences: Sentence[],
@@ -53,6 +58,30 @@ const currentPositionSentence = {
   correctedTokens: [{ original: '', type: 'current' }],
 } as Sentence;
 
+export const transformTextsToTextTokens = (texts: string[]): TextToken[] =>
+  texts.map((text) => ({ original: text }));
+
+export const identifyChangeTypesInText = (
+  wordChanges: WordChange[],
+  splitText: TextToken[]
+): TextToken[] => {
+  let index = 0;
+
+  const resultArray: TextToken[] = splitText.map((textToken: TextToken) => {
+    if (
+      index < wordChanges.length &&
+      textToken.original === wordChanges[index].word
+    ) {
+      const changeType = wordChanges[index].change;
+      index++;
+      return { original: textToken.original, type: changeType };
+    }
+    return { original: textToken.original };
+  });
+
+  return resultArray;
+};
+
 export const insertMissingTokens = (
   sentences: Sentence[],
   position: number
@@ -77,13 +106,11 @@ export const insertPositionToken = (
 export const deleteCurrentPosition = (textTokens: TextToken[]): TextToken[] =>
   textTokens.filter((token) => token.type !== 'current');
 
-export const transformTextToTokens = (section: EditorSection) => {
-  const changes = section.ranges;
-
-  return R.pipe(
-    (section: EditorSection) => splitText(section),
+export const transformTextToTokens = (section: EditorSection) =>
+  R.pipe(
+    (section: EditorSection) => findTokensToSplitOn(section.changes),
+    (tokens: string[]) => splitText(section.text, tokens),
     (texts: string[]) => transformTextsToTextTokens(texts),
-    (texts: TextToken[]) => identifyChangeTypesInText(changes, texts),
+    (texts: TextToken[]) => identifyChangeTypesInText(section.changes, texts),
     (tokens: TextToken[]) => splitFullSentences(tokens)
   )(section);
-};

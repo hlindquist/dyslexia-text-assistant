@@ -16,13 +16,12 @@
  */
 
 import {
-  DiffChanges,
   EditorSection,
   Sentence,
   SentenceWithConversation,
-  SpellingSection,
   WordChange,
 } from '../../types/types';
+import { ilog } from '../../utils/debugUtils';
 import Differ from '../actions/adapters/Differ';
 import { transformTextToTokens } from './tokenFunctions';
 
@@ -34,17 +33,19 @@ export const runAddTokensOnMarkedSentences = (sentences: Sentence[]) =>
   );
 
 export const addTokens = (sentence: Sentence): Sentence => {
-  const diffChanges = Differ.compare(
+  const diffChanges = Differ.compare(sentence.original, sentence.corrected);
+  ilog(diffChanges, 'diffChanges');
+  const originalSection = createSection(
     sentence.original,
-    sentence.corrected || ''
+    diffChanges.original
   );
-  const spellingSection = createSpellingSection(
-    sentence.original,
-    sentence.corrected || '',
-    diffChanges
+  const correctedSection = createSection(
+    sentence.corrected,
+    diffChanges.corrected
   );
-  const originalTokens = transformTextToTokens(spellingSection.original);
-  const correctedTokens = transformTextToTokens(spellingSection.corrected);
+  const originalTokens = transformTextToTokens(originalSection);
+  const correctedTokens = transformTextToTokens(correctedSection);
+  ilog(originalTokens, 'originalTokens');
 
   return {
     ...sentence,
@@ -53,23 +54,12 @@ export const addTokens = (sentence: Sentence): Sentence => {
   };
 };
 
-export const createSpellingSection = (
-  content: string,
-  response: string,
-  diffChanges: DiffChanges
-): SpellingSection => {
-  return {
-    original: createSection(content, diffChanges.original),
-    corrected: createSection(response, diffChanges.corrected),
-  };
-};
-
 export const createSection = (
   content: string,
   wordChanges: WordChange[]
 ): EditorSection => ({
   text: content,
-  ranges: wordChanges,
+  changes: wordChanges,
 });
 
 export const getSentencesWithoutCorrection = (

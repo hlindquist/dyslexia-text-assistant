@@ -15,13 +15,13 @@
  * Author: Håkon Lindquist
  */
 
+import * as R from 'ramda';
 import {
   HtmlSentence,
   Sentence,
   TextToken,
   WordChange,
 } from '../../types/types';
-import * as R from 'ramda';
 
 /* eslint-disable indent */
 export const transformNewlinesToBreaklines = (text: string) =>
@@ -76,30 +76,6 @@ export const insertsCharacterPositionElement = (
   });
 
   return modifiedTokens;
-};
-
-export const transformTextsToTextTokens = (texts: string[]): TextToken[] =>
-  texts.map((text) => ({ original: text }));
-
-export const identifyChangeTypesInText = (
-  wordChanges: WordChange[],
-  splitText: TextToken[]
-): TextToken[] => {
-  let index = 0;
-
-  const resultArray: TextToken[] = splitText.map((textToken: TextToken) => {
-    if (
-      index < wordChanges.length &&
-      textToken.original === wordChanges[index].word
-    ) {
-      const changeType = wordChanges[index].change;
-      index++;
-      return { original: textToken.original, type: changeType };
-    }
-    return { original: textToken.original };
-  });
-
-  return resultArray;
 };
 
 const transformCurrentToken = (token: TextToken) =>

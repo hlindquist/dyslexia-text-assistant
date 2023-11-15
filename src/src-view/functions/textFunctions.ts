@@ -4,7 +4,6 @@ import { escapeRegExp, findLastIndex } from 'lodash';
 import {
   CharPosition,
   ContentMessage,
-  EditorSection,
   RegexExtract,
   TextToken,
   WordChange,
@@ -33,26 +32,23 @@ export const createTrimmedContentMessage = (contentMessage: ContentMessage) => {
   }
 };
 
-export function multiSplit(
-  inputString: string,
-  tokensToSplitOn: string[]
-): string[] {
+export function splitText(text: string, tokensToSplitOn: string[]): string[] {
   const regexPattern = tokensToSplitOn
     .map((token) => `(${escapeRegExp(token)})`)
     .join('|');
 
-  const parts = inputString.split(new RegExp(regexPattern));
+  const parts = text.split(new RegExp(regexPattern));
 
-  return tokensToSplitOn?.length && inputString !== ''
+  return tokensToSplitOn?.length && text !== ''
     ? parts.filter((part) => !!part && part !== '')
-    : [inputString];
+    : [text];
 }
 
-export const splitText = (section: EditorSection): string[] => {
-  const wordChanges: WordChange[] = section.ranges || [];
+export const findTokensToSplitOn = (wordChanges: WordChange[]): string[] => {
   const allWords = wordChanges.map((change) => change.word);
   const tokensToSplitOn = Array.from(new Set(allWords));
-  return multiSplit(section.text, tokensToSplitOn);
+
+  return tokensToSplitOn;
 };
 
 export const getPositionIgnoringNewlines = (

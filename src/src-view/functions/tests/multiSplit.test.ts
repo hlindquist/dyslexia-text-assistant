@@ -16,7 +16,7 @@
  */
 
 import { describe, expect, it } from '@jest/globals';
-import { multiSplit } from '../textFunctions';
+import { splitText } from '../textFunctions';
 
 describe('multiSplit', () => {
   it('should split a string based on multiple tokens', () => {
@@ -24,7 +24,7 @@ describe('multiSplit', () => {
       'Hey, here is some text to split, Hey, here is some text to split.';
     const tokensToSplitOn = ['some', 'split'];
 
-    const result = multiSplit(inputString, tokensToSplitOn);
+    const result = splitText(inputString, tokensToSplitOn);
 
     expect(result).toEqual([
       'Hey, here is ',
@@ -43,7 +43,7 @@ describe('multiSplit', () => {
     const inputString = 'NoTokensHere';
     const tokensToSplitOn: string[] = [];
 
-    const result = multiSplit(inputString, tokensToSplitOn);
+    const result = splitText(inputString, tokensToSplitOn);
 
     expect(result).toEqual([inputString]);
   });
@@ -52,7 +52,7 @@ describe('multiSplit', () => {
     const inputString = '';
     const tokensToSplitOn = [' '];
 
-    const result = multiSplit(inputString, tokensToSplitOn);
+    const result = splitText(inputString, tokensToSplitOn);
 
     expect(result).toEqual(['']);
   });
