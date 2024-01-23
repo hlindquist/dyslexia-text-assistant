@@ -14,11 +14,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 14
-      - name: Install vsce
-        run: npm install -g vsce
       - name: Install dependencies
         run: npm install
       - name: Build extension
         run: npm run compile
       - name: Publish extension
-        run: vsce publish -p ${{ secrets.AZURE_DEVOPS_PAT }}
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: npm run publish-vsce
