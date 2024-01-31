@@ -15,11 +15,11 @@
  * Author: Håkon Lindquist
  */
 
-import * as vscode from 'vscode';
+import check from 'check-types';
 import { isEqual } from 'lodash';
+import * as vscode from 'vscode';
 import AssistantView from './extension/AssistantView';
 import { CharPosition, Language } from './types/types';
-import check from 'check-types';
 
 const getConfiguredLanguage = (
   configuration: vscode.WorkspaceConfiguration
