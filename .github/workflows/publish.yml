@@ -18,5 +18,7 @@ jobs:
         run: npm install
       - name: Build extension
         run: npm run compile
+      - name: Install vsce
+        run: npm install -g vsce
       - name: Publish extension
         run: vsce publish -p ${{ secrets.AZURE_DEVOPS_PAT }}
