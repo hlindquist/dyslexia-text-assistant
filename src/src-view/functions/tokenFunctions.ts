@@ -61,7 +61,7 @@ export const insertMissingTokens = (
 const insertPositionSentence = (sentences: Sentence[], indexToInsert: number) =>
   sentences
     .map((sentence: Sentence, index) =>
-      index === indexToInsert ? [currentPositionSentence, sentence] : [sentence]
+      index === indexToInsert ? [sentence, currentPositionSentence] : [sentence]
     )
     .flat();
 

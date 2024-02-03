@@ -70,9 +70,15 @@ export function activate(context: vscode.ExtensionContext) {
       const activeEditor = vscode.window.activeTextEditor;
 
       const text = activeEditor?.document.getText();
+      const vsPosition = activeEditor?.selection.active as vscode.Position;
+      const position = {
+        line: vsPosition.line,
+        character: vsPosition.character,
+      };
       if (text && text !== lastChange) {
         lastChange = text;
         handleUpdate(text);
+        assistantView?.updatePosition(position);
       }
     }
   };
