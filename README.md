@@ -1,7 +1,5 @@
 This is a text assistant designed to aid children with dyslexia in writing stories and other texts. The goal is to enhance their writing and reading abilities without requiring intervention from a teacher or parent, except for reading their completed texts. This is made possible thanks to ChatGPT's excellent capability to correct words and sentence structures in incorrect texts.
 
-<img src="./textassist.gif" width="800px">
-
 Key Features of this assistant:
 
 - Corrects text within its dedicated view to avoid disrupting the writer's flow.
