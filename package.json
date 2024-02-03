@@ -2,7 +2,7 @@
   "name": "dyslexia-text-assistant",
   "displayName": "Dyslexia Text Assistant",
   "description": "Text assistant tailored to kids with dyslexia.",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "publisher": "hakonlindquist",
   "icon": "kid-writing.png",
   "engines": {

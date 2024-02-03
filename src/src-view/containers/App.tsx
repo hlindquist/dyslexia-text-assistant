@@ -46,7 +46,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     scrollToCurrentPosition();
-  }, [charPosition]);
+  }, [charPosition, sentences]);
 
   useEffect(() => {
     window.addEventListener('resize', scrollToCurrentPosition);
