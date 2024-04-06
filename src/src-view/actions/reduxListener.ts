@@ -16,6 +16,12 @@
  * Author: Håkon Lindquist
  */
 
-import { handleNewCorrections } from './spellingService';
+import {
+  handleCachedCorrections,
+  handleNewCorrections,
+} from './spellingService';
 
-setInterval(handleNewCorrections, 135);
+setInterval(() => {
+  handleCachedCorrections();
+  handleNewCorrections();
+}, 100);

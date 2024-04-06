@@ -54,7 +54,7 @@ import SentenceCache from './adapters/SentenceCache';
 
 let previousText = '';
 
-export const handleCorrectionsFromCache = () => {
+export const handleCachedCorrections = () => {
   const state = store.getState().textAssistant;
 
   if (state.text !== undefined && previousText !== state.text) {
@@ -105,7 +105,7 @@ export const handleNewCorrections = () => {
     state.sentences
   );
 
-  const correctedSentences = sentencesWithConversation.map(
+  const correctionPromises = sentencesWithConversation.map(
     async (sentence: SentenceWithConversation) => {
       const [error, corrected] = await spellchecker.correct({
         sentence: {
@@ -129,7 +129,7 @@ export const handleNewCorrections = () => {
     }
   );
 
-  Promise.all(correctedSentences).catch((error) => {
+  Promise.all(correctionPromises).catch((error) => {
     logger.log('System error when correcting sentence', error);
   });
 };
