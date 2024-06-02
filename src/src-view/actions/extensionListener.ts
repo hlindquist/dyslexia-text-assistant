@@ -15,8 +15,6 @@
  * Author: Håkon Lindquist
  */
 
-import check from 'check-types';
-
 import { debounce } from 'lodash';
 import {
   CharPosition,
@@ -39,20 +37,10 @@ const handleCharPositionSimple = (charPosition: CharPositionSimple) => {
   store.dispatch(setCharPosition(charPosition));
 };
 
-const debouncedHandleContentMessage = debounce(handleContentMessage, 200);
-const debouncedHandleCharPosition = debounce(handleCharPosition, 100);
 const debouncedHandleCharPositionSimple = debounce(
   handleCharPositionSimple,
-  100
+  50
 );
-
-window.addEventListener('message', (event) => {
-  if (check.object(event?.data?.contentMessage)) {
-    debouncedHandleContentMessage(event.data.contentMessage);
-  } else if (check.object(event?.data?.charPosition)) {
-    debouncedHandleCharPosition(event.data.charPosition);
-  }
-});
 
 export const debugContentMessage = (message: ContentMessage) => {
   debouncedHandleContentMessage(message);
@@ -61,3 +49,6 @@ export const debugContentMessage = (message: ContentMessage) => {
 export const debugCharPosition = (charPosition: CharPositionSimple) => {
   debouncedHandleCharPositionSimple(charPosition);
 };
+
+export const debouncedHandleContentMessage = debounce(handleContentMessage, 50);
+export const debouncedHandleCharPosition = debounce(handleCharPosition, 50);
