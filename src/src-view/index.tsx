@@ -18,14 +18,31 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
+import check from 'check-types';
 import { Provider } from 'react-redux';
 import { isDebugModeEnabled } from '../utils/featureToggle';
 import './actions/extensionListener';
-import './actions/reduxListener';
+import {
+  debouncedHandleCharPosition,
+  debouncedHandleContentMessage,
+} from './actions/extensionListener';
+import { handleNewCorrections } from './actions/spellingService';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
 import './index.scss';
 import store from './redux/store';
+
+// Handle messages comming from the extension
+window.addEventListener('message', (event) => {
+  if (check.object(event?.data?.contentMessage)) {
+    debouncedHandleContentMessage(event.data.contentMessage);
+  } else if (check.object(event?.data?.charPosition)) {
+    debouncedHandleCharPosition(event.data.charPosition);
+  }
+});
+
+// Handle new corrections from the redux store queue
+setInterval(handleNewCorrections, 135);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
