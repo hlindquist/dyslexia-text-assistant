@@ -23,7 +23,6 @@ import {
   setIncompleteSentence,
   setText,
 } from '../redux/textAssistantSlice';
-import { handleCorrectionsFromCache } from './spellingService';
 
 export const handleContentMessage = (contentMessage: ContentMessage) => {
   const incompleteSentence = extractIncompleteSentence(contentMessage.text);
@@ -41,6 +40,4 @@ export const handleContentMessage = (contentMessage: ContentMessage) => {
     );
   store.dispatch(setIncompleteSentence(incompleteSentence));
   store.dispatch(setText(contentMessage.text));
-
-  handleCorrectionsFromCache();
 };

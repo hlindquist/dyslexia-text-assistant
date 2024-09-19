@@ -26,7 +26,7 @@ import {
   debouncedHandleCharPosition,
   debouncedHandleContentMessage,
 } from './actions/extensionListener';
-import { handleNewCorrections } from './actions/spellingService';
+import { handleCorrections } from './actions/spellingService';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
 import './index.scss';
@@ -42,7 +42,7 @@ window.addEventListener('message', (event) => {
 });
 
 // Handle new corrections from the redux store queue
-setInterval(handleNewCorrections, 135);
+setInterval(handleCorrections, 135);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(

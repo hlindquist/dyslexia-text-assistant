@@ -54,7 +54,12 @@ import SentenceCache from './adapters/SentenceCache';
 
 let previousText = '';
 
-export const handleCorrectionsFromCache = () => {
+export const handleCorrections = () => {
+  handleCorrectionsFromCache();
+  handleNewCorrections();
+};
+
+const handleCorrectionsFromCache = () => {
   const state = store.getState().textAssistant;
 
   if (state.text !== undefined && previousText !== state.text) {
@@ -81,7 +86,7 @@ export const handleCorrectionsFromCache = () => {
   }
 };
 
-export const handleNewCorrections = () => {
+const handleNewCorrections = () => {
   const spellchecker: Spellchecker = new ChatGPTConversational();
   const dispatcher: Dispatcher = store;
   const logger: Logger = console;
