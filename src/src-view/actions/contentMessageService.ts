@@ -27,14 +27,19 @@ import { handleCorrectionsFromCache } from './spellingService';
 
 export const handleContentMessage = (contentMessage: ContentMessage) => {
   const incompleteSentence = extractIncompleteSentence(contentMessage.text);
-  store.dispatch(setIncompleteSentence(incompleteSentence));
+  const state = store.getState().textAssistant;
+  const hasConfigChanged =
+    state.chatConfiguration.apiKey !== contentMessage.apiKey ||
+    state.chatConfiguration.language !== contentMessage.language;
 
-  store.dispatch(
-    setChatConfiguration({
-      apiKey: contentMessage.apiKey,
-      language: contentMessage.language,
-    })
-  );
+  hasConfigChanged &&
+    store.dispatch(
+      setChatConfiguration({
+        apiKey: contentMessage.apiKey,
+        language: contentMessage.language,
+      })
+    );
+  store.dispatch(setIncompleteSentence(incompleteSentence));
   store.dispatch(setText(contentMessage.text));
 
   handleCorrectionsFromCache();

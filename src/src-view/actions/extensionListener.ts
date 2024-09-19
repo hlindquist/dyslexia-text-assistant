@@ -16,11 +16,7 @@
  */
 
 import { debounce } from 'lodash';
-import {
-  CharPosition,
-  CharPositionSimple,
-  ContentMessage,
-} from '../../types/types';
+import { CharPosition, CharPositionSimple } from '../../types/types';
 import { getPositionIgnoringNewlines } from '../functions/textFunctions';
 import store from '../redux/store';
 import { setCharPosition } from '../redux/textAssistantSlice';
@@ -33,21 +29,8 @@ const handleCharPosition = (charPosition: CharPosition) => {
   handleCharPositionSimple(simplePosition);
 };
 
-const handleCharPositionSimple = (charPosition: CharPositionSimple) => {
+export const handleCharPositionSimple = (charPosition: CharPositionSimple) => {
   store.dispatch(setCharPosition(charPosition));
-};
-
-const debouncedHandleCharPositionSimple = debounce(
-  handleCharPositionSimple,
-  50
-);
-
-export const debugContentMessage = (message: ContentMessage) => {
-  debouncedHandleContentMessage(message);
-};
-
-export const debugCharPosition = (charPosition: CharPositionSimple) => {
-  debouncedHandleCharPositionSimple(charPosition);
 };
 
 export const debouncedHandleContentMessage = debounce(handleContentMessage, 50);
