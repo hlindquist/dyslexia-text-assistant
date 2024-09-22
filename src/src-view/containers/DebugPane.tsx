@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
   debugCharPosition,
   debugContentMessage,
-} from '../actions/extensionListener';
+} from '../actions/debugListener';
 import './DebugPane.css';
 
 declare const OPENAI_TEST_KEY: string;
