@@ -3,6 +3,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 
+require('dotenv').config();
+
 const viewLocalConfig = {
   target: 'web',
   mode: 'development',
@@ -63,6 +65,7 @@ const viewLocalConfig = {
     }),
     new DefinePlugin({
       OPENAI_TEST_KEY: JSON.stringify(process.env.OPENAI_API_KEY),
+      ENABLE_DEBUG: JSON.stringify(process.env.ENABLE_DEBUG),
     }),
   ],
 

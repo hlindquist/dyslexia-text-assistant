@@ -20,7 +20,6 @@ import { createRoot } from 'react-dom/client';
 
 import check from 'check-types';
 import { Provider } from 'react-redux';
-import { isDebugModeEnabled } from '../utils/featureToggle';
 import './actions/extensionListener';
 import {
   debouncedHandleCharPosition,
@@ -31,6 +30,7 @@ import App from './containers/App';
 import DebugPane from './containers/DebugPane';
 import './index.scss';
 import store from './redux/store';
+import { enableDebug } from './config';
 
 // Handle messages comming from the extension
 window.addEventListener('message', (event) => {
@@ -48,6 +48,6 @@ const root = createRoot(document.getElementById('root')!);
 root.render(
   <Provider store={store}>
     <App />
-    {isDebugModeEnabled() ? <DebugPane /> : null}
+    {enableDebug ? <DebugPane /> : null}
   </Provider>
 );
