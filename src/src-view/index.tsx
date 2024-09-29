@@ -20,17 +20,16 @@ import { createRoot } from 'react-dom/client';
 
 import check from 'check-types';
 import { Provider } from 'react-redux';
-import './actions/extensionListener';
 import {
   debouncedHandleCharPosition,
   debouncedHandleContentMessage,
-} from './actions/extensionListener';
-import { handleCorrections } from './actions/spellingService';
+  handleCorrections,
+} from './actions/services';
+import { enableDebug } from './config';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
 import './index.scss';
 import store from './redux/store';
-import { enableDebug } from './config';
 
 // Handle messages comming from the extension
 window.addEventListener('message', (event) => {

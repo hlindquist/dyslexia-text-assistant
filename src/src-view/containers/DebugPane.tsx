@@ -1,12 +1,21 @@
 import { Resizable } from 're-resizable';
 import React, { useState } from 'react';
+import { CharPositionSimple, ContentMessage } from '../../types/types';
 import {
-  debugCharPosition,
-  debugContentMessage,
-} from '../actions/debugListener';
+  debouncedHandleCharPositionSimple,
+  debouncedHandleContentMessage,
+} from '../actions/services';
 import './DebugPane.css';
 
 declare const OPENAI_TEST_KEY: string;
+
+export const debugContentMessage = (message: ContentMessage) => {
+  debouncedHandleContentMessage(message);
+};
+
+export const debugCharPosition = (charPosition: CharPositionSimple) => {
+  debouncedHandleCharPositionSimple(charPosition);
+};
 
 const DebugPane = () => {
   const [text, setText] = useState('');
