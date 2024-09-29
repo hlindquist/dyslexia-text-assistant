@@ -15,8 +15,12 @@
  * Author: Håkon Lindquist
  */
 
+import { debounce } from 'lodash';
 import R from 'ramda';
 import {
+  CharPosition,
+  CharPositionSimple,
+  ContentMessage,
   Dispatcher,
   Logger,
   Sentence,
@@ -36,18 +40,61 @@ import {
   setOldCorrectedText,
 } from '../functions/spellingFunctions';
 import {
+  extractIncompleteSentence,
+  getPositionIgnoringNewlines,
   splitIntoSentences,
   trimToCompleteSentences,
 } from '../functions/textFunctions';
 import store from '../redux/store';
 import {
   removeSentenceNeedingCorrection,
+  setCharPosition,
+  setChatConfiguration,
+  setIncompleteSentence,
   setSentences,
+  setText,
   updateNeedingCorrection,
   updateSentence,
 } from '../redux/textAssistantSlice';
 import CacheableSpellchecker from './adapters/CacheableSpellchecker';
 import ChatGPTConversational from './adapters/ChatGptConversational';
+
+export const handleContentMessage = (contentMessage: ContentMessage) => {
+  const incompleteSentence = extractIncompleteSentence(contentMessage.text);
+  const state = store.getState().textAssistant;
+  const hasConfigChanged =
+    state.chatConfiguration.apiKey !== contentMessage.apiKey ||
+    state.chatConfiguration.language !== contentMessage.language;
+
+  hasConfigChanged &&
+    store.dispatch(
+      setChatConfiguration({
+        apiKey: contentMessage.apiKey,
+        language: contentMessage.language,
+      })
+    );
+  store.dispatch(setIncompleteSentence(incompleteSentence));
+  store.dispatch(setText(contentMessage.text));
+};
+
+export const handleCharPosition = (charPosition: CharPosition) => {
+  const state = store.getState().textAssistant;
+  const simplePosition = getPositionIgnoringNewlines(charPosition, state.text);
+
+  handleCharPositionSimple(simplePosition);
+};
+
+export const handleCharPositionSimple = (charPosition: CharPositionSimple) => {
+  store.dispatch(setCharPosition(charPosition));
+};
+
+export const debouncedHandleContentMessage = debounce(handleContentMessage, 50);
+export const debouncedHandleCharPosition = debounce(handleCharPosition, 50);
+
+export const debouncedHandleCharPositionSimple = debounce(
+  handleCharPositionSimple,
+  50
+);
 
 let previousText = '';
 
