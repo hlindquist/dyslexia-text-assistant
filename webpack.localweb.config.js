@@ -64,8 +64,7 @@ const viewLocalConfig = {
       filename: 'index.html',
     }),
     new DefinePlugin({
-      OPENAI_TEST_KEY: JSON.stringify(process.env.OPENAI_API_KEY),
-      ENABLE_DEBUG: JSON.stringify(process.env.ENABLE_DEBUG),
+      OPENAI_TEST_KEY: JSON.stringify(process.env.OPENAI_API_KEY || ''),
     }),
   ],
 
