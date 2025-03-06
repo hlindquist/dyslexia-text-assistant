@@ -25,11 +25,12 @@ import {
   debouncedHandleContentMessage,
   handleCorrections,
 } from './actions/services';
-import { enableDebug } from './config';
 import App from './containers/App';
 import DebugPane from './containers/DebugPane';
 import './index.scss';
 import store from './redux/store';
+
+const enableDebug = false;
 
 // Handle messages comming from the extension
 window.addEventListener('message', (event) => {

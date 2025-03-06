@@ -89,6 +89,7 @@ const viewConfig = {
     new MiniCssExtractPlugin({ filename: 'viewStyles.css' }),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+      'process.env.OPENAI_TEST_KEY': JSON.stringify(process.env.OPENAI_API_KEY || ''),
     }),
   ],
 
